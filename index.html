@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Loma' 海洋喝吧 | 讓語言在城市，有個家</title>
 
   <!-- 導入 Google Fonts: Outfit & Noto Serif TC -->
@@ -72,6 +72,8 @@
     body {
       margin: 0;
       padding: 0;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
       background-color: var(--color-navy-darkest);
       color: var(--color-text-stars);
       font-family: var(--font-family-sans);
@@ -287,6 +289,7 @@
       -webkit-backdrop-filter: blur(12px);
       margin: 0 -20px;
       padding: 12px 20px;
+      padding-top: calc(12px + env(safe-area-inset-top));
       flex-shrink: 0;
     }
 
@@ -1288,7 +1291,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: var(--nav-height);
+      height: calc(var(--nav-height) + env(safe-area-inset-bottom));
       background: rgba(1, 3, 8, 0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -1299,6 +1302,7 @@
       z-index: 90;
       transition: transform var(--transition-smooth);
       padding: 0 10px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom));
     }
 
     .bottom-nav-bar.hidden {
