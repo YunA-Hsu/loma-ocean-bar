@@ -2915,6 +2915,10 @@
     // 5. SPA 畫面導航 (navigateTo) 與底部導航欄
     // ==========================================
     window.navigateTo = function (screenId) {
+      // 每次切換頁面時強制關閉播放頁
+      const playerScreen = document.getElementById('moment-player-screen');
+      if (playerScreen) playerScreen.style.display = 'none';
+
       // 關閉所有抽屜
       closeAllDrawers();
 
