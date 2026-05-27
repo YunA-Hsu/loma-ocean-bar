@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loma' 海洋喝吧 | 深夜聲音避風港</title>
-  
+  <title>Loma' 海洋喝吧 | 讓語言在城市，有個家</title>
+
   <!-- 導入 Google Fonts: Outfit & Noto Serif TC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <!-- 導入 Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+
   <!-- 導入 Howler.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-  
+
   <!-- 載入 LINE LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <!-- 載入 Leaflet Map SDK -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     /* CSS 變數 */
@@ -26,16 +33,16 @@
       --color-dark: #071426;
       --color-accent-amber: #d4a574;
       --color-amber: #d4a574;
-      --color-amber-50: rgba(212,165,116,0.5);
-      --color-border-glass: rgba(255,255,255,0.08);
+      --color-amber-50: rgba(212, 165, 116, 0.5);
+      --color-border-glass: rgba(255, 255, 255, 0.08);
       --color-text-stars: #e8f4f7;
       --color-text-sand: #c8b89a;
-      --color-silver-70: rgba(168,184,200,0.7);
-      --color-gray-light: rgba(168,184,200,0.5);
+      --color-silver-70: rgba(168, 184, 200, 0.7);
+      --color-gray-light: rgba(168, 184, 200, 0.5);
       --font-family-sans: 'Outfit', 'Noto Sans TC', sans-serif;
       --font-family-serif: 'Noto Serif TC', serif;
       --transition-normal: 0.25s ease;
-      --transition-smooth: 0.4s cubic-bezier(0.32,0.72,0,1);
+      --transition-smooth: 0.4s cubic-bezier(0.32, 0.72, 0, 1);
       --nav-height: 72px;
       --frame-width: 390px;
       --frame-height: 844px;
@@ -47,13 +54,16 @@
       width: 4px;
       height: 4px;
     }
+
     *::-webkit-scrollbar-track {
       background: transparent;
     }
+
     *::-webkit-scrollbar-thumb {
       background: rgba(212, 165, 116, 0.3);
       border-radius: 99px;
     }
+
     *::-webkit-scrollbar-thumb:hover {
       background: rgba(212, 165, 116, 0.5);
     }
@@ -102,11 +112,13 @@
       font-family: var(--font-family-sans);
       font-weight: 500;
     }
+
     .status-icons {
       display: flex;
       gap: 6px;
       align-items: center;
     }
+
     .status-icons svg {
       width: 14px;
       height: 14px;
@@ -153,6 +165,7 @@
       overflow-y: auto;
       z-index: 2;
     }
+
     .screen.active {
       display: flex;
       opacity: 1;
@@ -175,10 +188,12 @@
       transition: opacity 0.6s ease;
       background: radial-gradient(circle at center, #071935 0%, #010308 100%);
     }
+
     #splash-screen.fade-out {
       opacity: 0;
       pointer-events: none;
     }
+
     /* 層級 1 - 影片背景 */
     .splash-video-bg {
       position: absolute;
@@ -189,6 +204,7 @@
       object-fit: cover;
       z-index: 0;
     }
+
     /* 層級 2 - 半透明遮罩 */
     .splash-overlay {
       position: absolute;
@@ -199,6 +215,7 @@
       background: rgba(0, 0, 0, 0.5);
       z-index: 1;
     }
+
     /* 層級 3 - 文字與按鈕 */
     .splash-content {
       position: relative;
@@ -208,21 +225,25 @@
       align-items: center;
       padding: 0 32px;
     }
+
     .splash-title {
       font-size: 1rem;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
       font-weight: 400;
       margin: 0 0 40px 0;
       letter-spacing: 0.1em;
     }
+
     .splash-subtitle {
       font-family: var(--font-family-serif);
-      font-size: 1.6rem;  /* 原本 1.25rem */
+      font-size: 1.6rem;
+      /* 原本 1.25rem */
       font-style: italic;
       color: var(--color-amber);
       margin: 0 0 8px 0;
       letter-spacing: 0.05em;
     }
+
     .splash-tagline {
       font-size: 1.6rem;
       color: #ffffff;
@@ -230,6 +251,7 @@
       margin: 0 0 20px 0;
       letter-spacing: 0.1em;
     }
+
     .btn-enter {
       padding: 14px 36px;
       font-family: var(--font-family-sans);
@@ -245,6 +267,7 @@
       outline: none;
       box-shadow: 0 0 15px rgba(212, 165, 116, 0.1);
     }
+
     .btn-enter:hover {
       background: rgba(212, 165, 116, 0.12);
       box-shadow: 0 0 25px rgba(212, 165, 116, 0.3);
@@ -266,10 +289,12 @@
       padding: 12px 20px;
       flex-shrink: 0;
     }
+
     #screen-home {
       padding: 0;
       overflow: hidden;
     }
+
     .btn-icon {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--color-border-glass);
@@ -285,11 +310,13 @@
       outline: none;
       position: relative;
     }
+
     .btn-icon:hover {
       background: rgba(212, 165, 116, 0.1);
       border-color: rgba(212, 165, 116, 0.3);
       color: var(--color-amber);
     }
+
     .notification-dot {
       position: absolute;
       top: 10px;
@@ -300,6 +327,7 @@
       border-radius: 50%;
       border: 1px solid var(--color-navy-darkest);
     }
+
     .header-title-center {
       font-family: var(--font-family-serif);
       font-size: 1.25rem;
@@ -325,6 +353,7 @@
     .brand-title-area {
       margin-bottom: 24px;
     }
+
     .brand-title-area h1 {
       font-family: var(--font-family-serif);
       font-size: 2.2rem;
@@ -333,6 +362,7 @@
       letter-spacing: 0.08em;
       color: #ffffff;
     }
+
     .brand-title-area h2 {
       font-family: var(--font-family-serif);
       font-size: 1.05rem;
@@ -356,6 +386,7 @@
       justify-content: flex-end;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
+
     .today-video-bg {
       position: absolute;
       top: 0;
@@ -365,6 +396,7 @@
       object-fit: cover;
       z-index: 0;
     }
+
     .today-video-placeholder {
       position: absolute;
       inset: 0;
@@ -374,24 +406,42 @@
       align-items: center;
       z-index: 0;
     }
+
     .wave-ripple {
       position: absolute;
       border-radius: 50%;
-      border: 1px solid rgba(212,165,116,0.2);
+      border: 1px solid rgba(212, 165, 116, 0.2);
       animation: rippleAnim 4s infinite ease-out;
     }
-    .wave-ripple.r1 { width:60px; height:60px; animation-delay:0s; }
-    .wave-ripple.r2 { width:110px; height:110px; animation-delay:1.2s; }
-    .wave-ripple.r3 { width:160px; height:160px; animation-delay:2.4s; }
+
+    .wave-ripple.r1 {
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+    }
+
+    .wave-ripple.r2 {
+      width: 110px;
+      height: 110px;
+      animation-delay: 1.2s;
+    }
+
+    .wave-ripple.r3 {
+      width: 160px;
+      height: 160px;
+      animation-delay: 2.4s;
+    }
+
     .today-player-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
       z-index: 1;
     }
+
     .today-tag {
       position: absolute;
       top: 14px;
@@ -406,11 +456,13 @@
       font-weight: 600;
       letter-spacing: 0.05em;
     }
+
     .today-subtitle-box {
       position: relative;
       z-index: 2;
       padding: 16px 16px 8px 16px;
     }
+
     .today-subtitle-ami {
       font-family: var(--font-family-serif);
       font-size: 1.15rem;
@@ -418,12 +470,14 @@
       font-style: italic;
       margin: 0 0 4px 0;
     }
+
     .today-subtitle-zh {
       font-size: 0.82rem;
       color: rgba(255, 255, 255, 0.85);
       margin: 0;
       letter-spacing: 0.05em;
     }
+
     .today-control-bar {
       position: relative;
       z-index: 2;
@@ -432,6 +486,7 @@
       align-items: center;
       gap: 12px;
     }
+
     .btn-play-mini {
       background: var(--color-amber);
       border: none;
@@ -446,14 +501,17 @@
       outline: none;
       transition: transform 0.2s ease;
     }
+
     .btn-play-mini:active {
       transform: scale(0.9);
     }
+
     .btn-play-mini svg {
       width: 14px;
       height: 14px;
       fill: currentColor;
     }
+
     .progress-bar-container {
       flex: 1;
       height: 4px;
@@ -462,6 +520,7 @@
       position: relative;
       cursor: pointer;
     }
+
     .progress-bar-fill {
       height: 100%;
       background: var(--color-amber);
@@ -469,6 +528,7 @@
       width: 0%;
       transition: width 0.1s linear;
     }
+
     .countdown-timer {
       font-family: var(--font-family-sans);
       font-size: 0.72rem;
@@ -488,11 +548,13 @@
       align-items: center;
       gap: 6px;
     }
+
     .section-title svg {
       width: 16px;
       height: 16px;
       color: var(--color-amber);
     }
+
     .horizontal-scroll-container {
       display: flex;
       gap: 14px;
@@ -501,9 +563,11 @@
       margin-bottom: 24px;
       scroll-snap-type: x mandatory;
     }
+
     .horizontal-scroll-container::-webkit-scrollbar {
       height: 3px;
     }
+
     .horizontal-card {
       scroll-snap-align: start;
       flex: 0 0 250px;
@@ -518,16 +582,19 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
     .horizontal-card:hover {
       transform: translateY(-2px);
       border-color: rgba(212, 165, 116, 0.3);
     }
+
     .card-meta {
       font-size: 0.72rem;
       color: var(--color-amber);
       margin-bottom: 6px;
       font-weight: 500;
     }
+
     .card-heading {
       font-size: 0.9rem;
       font-weight: 600;
@@ -535,6 +602,7 @@
       margin: 0 0 6px 0;
       line-height: 1.4;
     }
+
     .card-subtext {
       font-size: 0.76rem;
       color: var(--color-silver-70);
@@ -549,6 +617,7 @@
       gap: 14px;
       margin-bottom: 20px;
     }
+
     .event-card {
       background: rgba(7, 20, 38, 0.45);
       border: 1px solid var(--color-border-glass);
@@ -556,24 +625,28 @@
       padding: 16px;
       box-sizing: border-box;
     }
+
     .event-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 10px;
     }
+
     .event-title {
       font-size: 0.95rem;
       font-weight: 600;
       color: #ffffff;
       margin: 0;
     }
+
     .event-details {
       display: flex;
       flex-direction: column;
       gap: 4px;
       margin-bottom: 14px;
     }
+
     .event-detail-item {
       font-size: 0.78rem;
       color: var(--color-silver-70);
@@ -581,11 +654,13 @@
       align-items: center;
       gap: 6px;
     }
+
     .event-detail-item svg {
       width: 12px;
       height: 12px;
       color: var(--color-amber);
     }
+
     .btn-text-action {
       background: transparent;
       border: none;
@@ -600,9 +675,11 @@
       transition: opacity 0.2s ease;
       outline: none;
     }
+
     .btn-text-action:hover {
       opacity: 0.8;
     }
+
     .btn-text-action svg {
       width: 14px;
       height: 14px;
@@ -615,6 +692,7 @@
       gap: 12px;
       margin-bottom: 24px;
     }
+
     .mood-grid-item {
       background: rgba(7, 20, 38, 0.45);
       border: 1px solid var(--color-border-glass);
@@ -629,16 +707,19 @@
       justify-content: center;
       gap: 8px;
     }
+
     .mood-grid-item:hover {
       transform: translateY(-2px);
       background: rgba(7, 20, 38, 0.6);
       border-color: rgba(212, 165, 116, 0.2);
     }
+
     .mood-grid-item.active {
       border-color: var(--color-amber);
       background: rgba(212, 165, 116, 0.08);
       box-shadow: 0 0 15px rgba(212, 165, 116, 0.15);
     }
+
     .mood-icon-wrapper {
       width: 44px;
       height: 44px;
@@ -650,14 +731,17 @@
       color: var(--color-text-stars);
       transition: all var(--transition-normal);
     }
+
     .mood-grid-item.active .mood-icon-wrapper {
       background: var(--color-amber);
       color: var(--color-navy-darkest);
     }
+
     .mood-grid-item.active .mood-name {
       color: var(--color-amber);
       font-weight: 600;
     }
+
     .mood-name {
       font-size: 0.95rem;
       color: var(--color-text-stars);
@@ -670,6 +754,7 @@
       flex-direction: column;
       gap: 16px;
     }
+
     .moment-placeholder-visual {
       height: 120px;
       border-radius: 16px;
@@ -681,6 +766,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .moment-wave-ripple {
       position: absolute;
       width: 80px;
@@ -689,21 +775,33 @@
       border: 1px solid rgba(212, 165, 116, 0.15);
       animation: rippleAnim 3s infinite linear;
     }
+
     .moment-wave-ripple:nth-child(2) {
       animation-delay: 1.5s;
     }
+
     @keyframes rippleAnim {
-      0% { transform: scale(0.5); opacity: 1; }
-      100% { transform: scale(2.5); opacity: 0; }
+      0% {
+        transform: scale(0.5);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(2.5);
+        opacity: 0;
+      }
     }
+
     .moment-visual-icon {
       color: var(--color-amber);
       z-index: 2;
     }
+
     .moment-visual-icon svg {
       width: 32px;
       height: 32px;
     }
+
     .moment-phrase-native {
       font-family: var(--font-family-serif);
       font-size: 1.35rem;
@@ -712,6 +810,7 @@
       margin: 0;
       text-align: center;
     }
+
     .moment-phrase-zh {
       font-size: 0.9rem;
       color: #ffffff;
@@ -719,6 +818,7 @@
       text-align: center;
       font-weight: 500;
     }
+
     .moment-story-box {
       font-size: 0.8rem;
       color: var(--color-silver-70);
@@ -736,6 +836,7 @@
       margin-bottom: 20px;
       padding-bottom: 4px;
     }
+
     .tab-pill {
       white-space: nowrap;
       background: rgba(255, 255, 255, 0.04);
@@ -749,17 +850,20 @@
       transition: all var(--transition-normal);
       outline: none;
     }
+
     .tab-pill.active {
       background: var(--color-amber);
       border-color: var(--color-amber);
       color: var(--color-navy-darkest);
       font-weight: 600;
     }
+
     .product-list-vertical {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
+
     .product-card {
       background: rgba(7, 20, 38, 0.45);
       border: 1px solid var(--color-border-glass);
@@ -770,9 +874,11 @@
       box-sizing: border-box;
       transition: border-color var(--transition-normal);
     }
+
     .product-card:hover {
       border-color: rgba(212, 165, 116, 0.25);
     }
+
     .product-img {
       width: 90px;
       height: 90px;
@@ -782,15 +888,18 @@
       background: #020712;
       border: 1px solid rgba(255, 255, 255, 0.04);
     }
+
     .product-info {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
+
     .product-header-row {
       margin-bottom: 4px;
     }
+
     .product-brand-tag {
       font-size: 0.68rem;
       color: var(--color-amber);
@@ -798,23 +907,27 @@
       display: block;
       margin-bottom: 2px;
     }
+
     .product-title {
       font-size: 0.95rem;
       font-weight: 600;
       color: #ffffff;
       margin: 0;
     }
+
     .product-price-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 8px;
     }
+
     .product-price {
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--color-text-stars);
     }
+
     .btn-buy-action {
       background: transparent;
       border: none;
@@ -828,11 +941,13 @@
       padding: 0;
       outline: none;
     }
+
     .btn-buy-action svg {
       width: 12px;
       height: 12px;
       transition: transform 0.2s ease;
     }
+
     .btn-buy-action:hover svg {
       transform: translateX(3px);
     }
@@ -853,6 +968,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .map-ambient-circles {
       position: absolute;
       width: 140px;
@@ -861,10 +977,17 @@
       border: 1px dashed rgba(212, 165, 116, 0.08);
       animation: rotateAnim 20s infinite linear;
     }
+
     @keyframes rotateAnim {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
+
     .map-status-text {
       font-size: 0.88rem;
       color: var(--color-text-stars);
@@ -872,11 +995,13 @@
       letter-spacing: 0.08em;
       z-index: 2;
     }
+
     .map-pins-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
+
     .location-item-card {
       background: rgba(7, 20, 38, 0.45);
       border: 1px solid var(--color-border-glass);
@@ -886,16 +1011,19 @@
       cursor: pointer;
       transition: all var(--transition-normal);
     }
+
     .location-item-card:hover {
       transform: translateY(-2px);
       border-color: rgba(212, 165, 116, 0.2);
     }
+
     .location-item-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
     }
+
     .location-type-tag {
       font-size: 0.68rem;
       color: var(--color-amber);
@@ -904,12 +1032,14 @@
       border-radius: 4px;
       font-weight: 500;
     }
+
     .location-item-title {
       font-size: 0.95rem;
       font-weight: 600;
       color: #ffffff;
       margin: 0;
     }
+
     .location-item-desc {
       font-size: 0.78rem;
       color: var(--color-silver-70);
@@ -924,6 +1054,7 @@
       gap: 16px;
       margin-bottom: 24px;
     }
+
     .profile-avatar-circle {
       width: 60px;
       height: 60px;
@@ -936,16 +1067,19 @@
       background: rgba(212, 165, 116, 0.08);
       box-shadow: 0 0 15px rgba(212, 165, 116, 0.1);
     }
+
     .profile-avatar-circle svg {
       width: 28px;
       height: 28px;
     }
+
     .profile-inputs {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
+
     .profile-input-item {
       display: flex;
       align-items: center;
@@ -954,12 +1088,14 @@
       border-radius: 10px;
       padding: 4px 10px;
     }
+
     .profile-input-item label {
       font-size: 0.72rem;
       color: var(--color-amber);
       width: 40px;
       font-weight: 500;
     }
+
     .profile-input-item input {
       background: transparent;
       border: none;
@@ -979,9 +1115,11 @@
       color: #ffffff;
       letter-spacing: 0.05em;
     }
+
     .bookmarks-container {
       margin-bottom: 24px;
     }
+
     .bookmarks-empty {
       background: rgba(255, 255, 255, 0.02);
       border: 1px dashed var(--color-border-glass);
@@ -995,15 +1133,18 @@
       align-items: center;
       gap: 8px;
     }
+
     .bookmarks-empty svg {
       width: 24px;
       height: 24px;
     }
+
     .bookmarks-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
     .bookmark-card {
       background: rgba(7, 20, 38, 0.45);
       border: 1px solid var(--color-border-glass);
@@ -1013,9 +1154,11 @@
       cursor: pointer;
       transition: all var(--transition-normal);
     }
+
     .bookmark-card:hover {
       border-color: rgba(212, 165, 116, 0.2);
     }
+
     .bookmark-card h4 {
       font-size: 0.82rem;
       color: var(--color-amber);
@@ -1023,6 +1166,7 @@
       font-family: var(--font-family-serif);
       font-style: italic;
     }
+
     .bookmark-card p {
       font-size: 0.72rem;
       color: var(--color-silver-70);
@@ -1038,6 +1182,7 @@
       padding: 16px;
       margin-bottom: 24px;
     }
+
     .about-brand-title {
       font-family: var(--font-family-serif);
       font-size: 1rem;
@@ -1045,6 +1190,7 @@
       color: var(--color-amber);
       margin: 0 0 6px 0;
     }
+
     .about-brand-text {
       font-size: 0.76rem;
       color: var(--color-silver-70);
@@ -1058,6 +1204,7 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .ambient-item {
       display: flex;
       justify-content: space-between;
@@ -1067,21 +1214,25 @@
       border-radius: 14px;
       padding: 12px 16px;
     }
+
     .ambient-label-wrapper {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .ambient-label-wrapper svg {
       width: 18px;
       height: 18px;
       color: var(--color-amber);
     }
+
     .ambient-name {
       font-size: 0.85rem;
       font-weight: 500;
       color: var(--color-text-stars);
     }
+
     /* Toggle Switch Style */
     .switch {
       position: relative;
@@ -1089,11 +1240,13 @@
       width: 44px;
       height: 24px;
     }
+
     .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
@@ -1106,6 +1259,7 @@
       border-radius: 34px;
       border: 1px solid var(--color-border-glass);
     }
+
     .slider:before {
       position: absolute;
       content: "";
@@ -1117,11 +1271,13 @@
       transition: .3s;
       border-radius: 50%;
     }
-    input:checked + .slider {
+
+    input:checked+.slider {
       background-color: rgba(212, 165, 116, 0.2);
       border-color: var(--color-amber);
     }
-    input:checked + .slider:before {
+
+    input:checked+.slider:before {
       transform: translateX(20px);
       background-color: var(--color-amber);
     }
@@ -1144,9 +1300,11 @@
       transition: transform var(--transition-smooth);
       padding: 0 10px;
     }
+
     .bottom-nav-bar.hidden {
       transform: translateY(100%);
     }
+
     .nav-item {
       display: flex;
       flex-direction: column;
@@ -1164,23 +1322,28 @@
       height: 100%;
       text-align: center;
     }
+
     .nav-item svg {
       width: 20px;
       height: 20px;
       stroke-width: 2px;
       transition: transform 0.2s ease;
     }
+
     .nav-item span {
       font-size: 0.65rem;
       font-weight: 500;
       letter-spacing: 0.05em;
     }
+
     .nav-item:hover {
       color: var(--color-text-stars);
     }
+
     .nav-item.active {
       color: var(--color-amber);
     }
+
     .nav-item.active svg {
       transform: translateY(-2px);
     }
@@ -1200,10 +1363,12 @@
       pointer-events: none;
       transition: opacity var(--transition-smooth);
     }
+
     .drawer-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
+
     .drawer-panel {
       position: absolute;
       left: 0;
@@ -1222,15 +1387,18 @@
       box-sizing: border-box;
       overflow-y: auto;
     }
+
     .drawer-panel.active {
       transform: translateY(0);
     }
+
     .drawer-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
+
     .drawer-title {
       font-family: var(--font-family-serif);
       font-size: 1.15rem;
@@ -1238,6 +1406,7 @@
       color: #ffffff;
       margin: 0;
     }
+
     .btn-close-drawer {
       background: rgba(255, 255, 255, 0.05);
       border: none;
@@ -1251,10 +1420,12 @@
       cursor: pointer;
       outline: none;
     }
+
     .btn-close-drawer:hover {
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
     }
+
     .btn-close-drawer svg {
       width: 16px;
       height: 16px;
@@ -1266,6 +1437,7 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .notif-item {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--color-border-glass);
@@ -1274,6 +1446,7 @@
       display: flex;
       gap: 12px;
     }
+
     .notif-avatar {
       width: 32px;
       height: 32px;
@@ -1286,28 +1459,34 @@
       color: var(--color-amber);
       flex-shrink: 0;
     }
+
     .notif-avatar svg {
       width: 16px;
       height: 16px;
     }
+
     .notif-body {
       flex: 1;
     }
+
     .notif-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2px;
     }
+
     .notif-sender {
       font-size: 0.8rem;
       font-weight: 600;
       color: #ffffff;
     }
+
     .notif-time {
       font-size: 0.65rem;
       color: var(--color-gray-light);
     }
+
     .notif-text {
       font-size: 0.76rem;
       color: var(--color-silver-70);
@@ -1327,12 +1506,14 @@
       margin-bottom: 12px;
       display: inline-block;
     }
+
     .place-detail-info-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-bottom: 16px;
     }
+
     .place-info-row {
       display: flex;
       align-items: center;
@@ -1340,18 +1521,21 @@
       font-size: 0.82rem;
       color: var(--color-silver-70);
     }
+
     .place-info-row svg {
       width: 14px;
       height: 14px;
       color: var(--color-amber);
       flex-shrink: 0;
     }
+
     .place-detail-desc {
       font-size: 0.82rem;
       color: var(--color-text-stars);
       line-height: 1.5;
       margin: 0 0 20px 0;
     }
+
     .btn-action-primary {
       width: 100%;
       background: var(--color-amber);
@@ -1369,13 +1553,14 @@
       transition: opacity 0.2s ease;
       outline: none;
     }
+
     .btn-action-primary:hover {
       opacity: 0.9;
     }
 
-    /* 文化主題卡片 */
+    /* 心情片刻主題卡片樣式 */
     .moment-topic-card {
-      background: rgba(7,20,38,0.55);
+      background: rgba(7, 20, 38, 0.55);
       border: 1px solid var(--color-border-glass);
       border-radius: 16px;
       padding: 16px 12px;
@@ -1387,32 +1572,41 @@
       transition: all 0.25s ease;
       text-align: center;
     }
+
     .moment-topic-card:hover {
       border-color: var(--color-amber);
-      background: rgba(212,165,116,0.08);
+      background: rgba(212, 165, 116, 0.08);
       transform: translateY(-2px);
     }
+
     .moment-topic-card.coming-soon {
       opacity: 0.4;
       cursor: default;
       pointer-events: none;
     }
+
     .moment-topic-icon {
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255, 255, 255, 0.04);
       display: flex;
       justify-content: center;
       align-items: center;
       color: var(--color-amber);
     }
-    .moment-topic-icon svg { width:20px; height:20px; }
+
+    .moment-topic-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
     .moment-topic-name {
       font-size: 0.9rem;
       font-weight: 600;
       color: #ffffff;
     }
+
     .moment-topic-sub {
       font-size: 0.68rem;
       color: var(--color-silver-70);
@@ -1423,36 +1617,51 @@
     .player-ripple {
       position: absolute;
       border-radius: 50%;
-      border: 1px solid rgba(212,165,116,0.25);
+      border: 1px solid rgba(212, 165, 116, 0.25);
       animation: playerRipple 3s infinite ease-out;
     }
-    .player-ripple.r1 { width:100px; height:100px; animation-delay:0s; }
-    .player-ripple.r2 { width:150px; height:150px; animation-delay:1s; }
-    .player-ripple.r3 { width:200px; height:200px; animation-delay:2s; }
-    @keyframes playerRipple {
-      0% { transform:scale(0.8); opacity:0.6; }
-      100% { transform:scale(1.2); opacity:0; }
+
+    .player-ripple.r1 {
+      width: 100px;
+      height: 100px;
+      animation-delay: 0s;
+    }
+
+    .player-ripple.r2 {
+      width: 150px;
+      height: 150px;
+      animation-delay: 1s;
+    }
+
+    .player-ripple.r3 {
+      width: 200px;
+      height: 200px;
+      animation-delay: 2s;
+    }
     }
 
     /* 留言區樣式 */
     .comment-item {
-      background: rgba(7,20,38,0.5);
+      background: rgba(7, 20, 38, 0.5);
       border: 1px solid var(--color-border-glass);
       border-radius: 12px;
       padding: 12px 14px;
+      margin-bottom: 12px;
     }
+
     .comment-header {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 8px;
     }
+
     .comment-avatar {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: rgba(212,165,116,0.15);
-      border: 1px solid rgba(212,165,116,0.3);
+      background: rgba(212, 165, 116, 0.15);
+      border: 1px solid rgba(212, 165, 116, 0.3);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1461,21 +1670,25 @@
       font-weight: 600;
       flex-shrink: 0;
     }
+
     .comment-name {
       font-size: 0.8rem;
       font-weight: 600;
       color: #fff;
     }
+
     .comment-time {
       font-size: 0.65rem;
       color: var(--color-gray-light);
     }
+
     .comment-text {
       font-size: 0.82rem;
       color: var(--color-silver-70);
       line-height: 1.5;
       margin-bottom: 8px;
     }
+
     .comment-reply-btn {
       background: none;
       border: none;
@@ -1488,14 +1701,66 @@
       padding: 0;
       opacity: 0.7;
     }
-    .comment-reply-btn:hover { opacity: 1; }
+
+    .comment-reply-btn:hover {
+      opacity: 1;
+    }
+
+    /* Leaflet 閃爍星星標記 */
+    .star-marker {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .star-core {
+      width: 10px;
+      height: 10px;
+      background: #d4a574;
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 6px rgba(212,165,116,0.8);
+      animation: starPulse 2s ease-in-out infinite;
+    }
+    .star-ring {
+      width: 24px;
+      height: 24px;
+      border: 1.5px solid rgba(212,165,116,0.5);
+      border-radius: 50%;
+      position: absolute;
+      animation: starRing 2s ease-out infinite;
+    }
+    .star-ring-2 {
+      animation-delay: 1s;
+    }
+    @keyframes starPulse {
+      0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px rgba(212,165,116,0.8); }
+      50% { transform: scale(1.3); opacity: 0.9; box-shadow: 0 0 14px rgba(212,165,116,1); }
+    }
+    @keyframes starRing {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    /* Leaflet 深色主題覆蓋 */
+    .leaflet-tile {
+      filter: brightness(0.5) saturate(0.3) hue-rotate(180deg);
+    }
+    .leaflet-container {
+      background: #050f1f;
+    }
   </style>
 </head>
+
 <body>
+
+  <!-- 桌機背景氛圍 -->
+  <div class="desktop-bg-ambient"></div>
 
   <!-- 手機外殼容器 -->
   <div class="mobile-frame">
-    
 
     <!-- 背景動態星空畫布 -->
     <canvas id="starsCanvas"></canvas>
@@ -1528,7 +1793,9 @@
       <header class="screen-header">
         <button class="btn-icon" id="btn-menu-trigger"><i data-lucide="menu"></i></button>
         <div style="text-align:center; line-height:1.3;">
-          <div style="font-family:var(--font-family-serif); font-size:1.1rem; font-weight:700; color:#ffffff; letter-spacing:0.05em;">Loma' 海洋喝吧</div>
+          <div
+            style="font-family:var(--font-family-serif); font-size:1.1rem; font-weight:700; color:#ffffff; letter-spacing:0.05em;">
+            Loma' 海洋喝吧</div>
           <div style="font-size:0.68rem; color:var(--color-amber); letter-spacing:0.08em;">讓語言在城市，有個家</div>
         </div>
         <button class="btn-icon" id="btn-bell-trigger">
@@ -1536,47 +1803,67 @@
           <span class="notification-dot" id="notif-badge"></span>
         </button>
       </header>
-      
+
       <!-- 以下內容可捲動 -->
       <div style="overflow-y:auto; flex:1; padding: 24px 20px calc(var(--nav-height) + 16px) 20px;">
         <!-- 今日片刻播放器 -->
-        <div class="today-moment-player" style="position:relative; border-radius:20px; overflow:hidden; width:100%; padding-top:56.25%; margin-bottom:16px;">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;">
-          <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%); z-index:1;"></div>
-          <div style="position:absolute; top:12px; right:12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); color:var(--color-amber); font-size:0.65rem; padding:3px 8px; border-radius:6px; z-index:3; font-weight:600;">今日片刻</div>
-          <div style="position:absolute; top:12px; left:14px; z-index:3; font-size:0.78rem; color:rgba(255,255,255,0.85);">深夜的海洋，會收容你的疲憊</div>
+        <div class="today-moment-player"
+          style="position:relative; border-radius:20px; overflow:hidden; width:100%; padding-top:56.25%; margin-bottom:16px;">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
+            style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;">
+          <div
+            style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%); z-index:1;">
+          </div>
+          <div
+            style="position:absolute; top:12px; right:12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); color:var(--color-amber); font-size:0.65rem; padding:3px 8px; border-radius:6px; z-index:3; font-weight:600;">
+            今日片刻</div>
+          <div
+            style="position:absolute; top:12px; left:14px; z-index:3; font-size:0.78rem; color:rgba(255,255,255,0.85);">
+            深夜的海洋，會收容你的疲憊</div>
           <div style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center; z-index:3;">
-            <button id="btn-play-today" onclick="toggleTodayPlay()" style="width:52px; height:52px; border-radius:50%; background:rgba(212,165,116,0.85); border:none; cursor:pointer; display:flex; justify-content:center; align-items:center;">
+            <button id="btn-play-today" onclick="toggleTodayPlay()"
+              style="width:52px; height:52px; border-radius:50%; background:rgba(212,165,116,0.85); border:none; cursor:pointer; display:flex; justify-content:center; align-items:center;">
               <i id="today-play-icon" data-lucide="play" style="width:22px; height:22px; color:#071426;"></i>
             </button>
           </div>
           <div style="position:absolute; bottom:44px; left:0; right:0; text-align:center; z-index:3; padding:0 16px;">
-            <div style="font-family:var(--font-family-serif); font-size:0.95rem; color:var(--color-amber); font-style:italic;">Mihamis kamo haw?</div>
+            <div
+              style="font-family:var(--font-family-serif); font-size:0.95rem; color:var(--color-amber); font-style:italic;">
+              Mihamis kamo haw?</div>
           </div>
-          <div style="position:absolute; bottom:0; left:0; right:0; z-index:3; padding:8px 16px 12px; display:flex; align-items:center; gap:10px;">
+          <div
+            style="position:absolute; bottom:0; left:0; right:0; z-index:3; padding:8px 16px 12px; display:flex; align-items:center; gap:10px;">
             <i data-lucide="headphones" style="width:15px; height:15px; color:rgba(168,184,200,0.7);"></i>
-            <div id="today-progress-container" style="flex:1; height:3px; background:rgba(255,255,255,0.2); border-radius:2px; cursor:pointer;">
-              <div id="today-progress-fill" style="height:100%; width:0%; background:var(--color-amber); border-radius:2px; transition:width 0.1s linear;"></div>
+            <div id="today-progress-container"
+              style="flex:1; height:3px; background:rgba(255,255,255,0.2); border-radius:2px; cursor:pointer;">
+              <div id="today-progress-fill"
+                style="height:100%; width:0%; background:var(--color-amber); border-radius:2px; transition:width 0.1s linear;">
+              </div>
             </div>
             <span id="today-timer" style="font-size:0.7rem; color:rgba(168,184,200,0.7); min-width:24px;">30s</span>
           </div>
         </div>
 
-        <button onclick="window.navigateTo('screen-moments')" style="width:100%; margin-top:12px; margin-bottom:28px; padding:11px; background:rgba(212,165,116,0.08); border:1px solid rgba(212,165,116,0.3); border-radius:12px; color:var(--color-amber); font-size:0.82rem; font-weight:500; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
+        <button onclick="window.navigateTo('screen-moments')"
+          style="width:100%; margin-top:12px; margin-bottom:28px; padding:11px; background:rgba(212,165,116,0.08); border:1px solid rgba(212,165,116,0.3); border-radius:12px; color:var(--color-amber); font-size:0.82rem; font-weight:500; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
           <i data-lucide="heart" style="width:14px;height:14px;"></i>
           選擇你的心情，找到今晚的片刻 →
         </button>
 
         <!-- 今日片刻選物 -->
         <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
-          <div style="display:flex; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.2); border-radius:16px; overflow:hidden; cursor:pointer;" onclick="window.navigateTo('screen-shop')">
-            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400" style="width:130px; height:130px; object-fit:cover; flex-shrink:0;">
+          <div
+            style="display:flex; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.2); border-radius:16px; overflow:hidden; cursor:pointer;"
+            onclick="window.navigateTo('screen-shop')">
+            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400"
+              style="width:130px; height:130px; object-fit:cover; flex-shrink:0;">
             <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
               <div>
                 <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:4px;">原青手作工坊</div>
                 <div style="font-size:0.95rem; font-weight:600; color:#ffffff; margin-bottom:2px;">Alofo 編織手作包</div>
                 <div style="font-size:0.72rem; color:var(--color-silver-70);">阿美族創業品牌</div>
-                <div style="font-size:0.72rem; color:var(--color-silver-70); margin-top:6px; line-height:1.4;">每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性。</div>
+                <div style="font-size:0.72rem; color:var(--color-silver-70); margin-top:6px; line-height:1.4;">
+                  每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性。</div>
               </div>
               <div style="text-align:right; margin-top:8px;">
                 <span style="font-size:0.78rem; color:var(--color-amber); font-weight:600;">前往選品 →</span>
@@ -1625,11 +1912,13 @@
     </div>
 
     <!-- ==========================================
-         【畫面 2】文化片刻 id="screen-moments"
+         【畫面 2】心情片刻 id="screen-moments"
          ========================================== -->
     <div class="screen" id="screen-moments">
+
       <!-- 固定 header -->
-      <div class="screen-header" style="position:sticky; top:0; z-index:50; background:rgba(1,3,8,0.85); backdrop-filter:blur(12px); margin:0 -20px; padding:12px 20px; flex-shrink:0;">
+      <div class="screen-header"
+        style="position:sticky; top:0; z-index:50; background:rgba(1,3,8,0.85); backdrop-filter:blur(12px); margin:0 -20px; padding:12px 20px; flex-shrink:0;">
         <div style="width:40px;"></div>
         <h2 class="header-title-center">心情片刻</h2>
         <div style="width:40px;"></div>
@@ -1640,7 +1929,8 @@
 
         <!-- 主題一：心情 -->
         <div style="margin-bottom:28px;">
-          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          <div
+            style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="heart" style="width:14px;height:14px;"></i> 心情
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
@@ -1669,7 +1959,8 @@
 
         <!-- 主題二：文化故事 -->
         <div style="margin-bottom:28px;">
-          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          <div
+            style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="book-open" style="width:14px;height:14px;"></i> 文化故事
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
@@ -1688,7 +1979,8 @@
 
         <!-- 主題三：節日節選 -->
         <div style="margin-bottom:28px;">
-          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          <div
+            style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="sparkles" style="width:14px;height:14px;"></i> 節日節選
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
@@ -1708,138 +2000,151 @@
       </div>
     </div>
 
+
+
     <!-- ==========================================
          【畫面 3】選品 id="screen-shop"
          ========================================== -->
     <div class="screen" id="screen-shop">
-      <header class="screen-header">
-        <span style="width:40px;"></span>
-        <h2 class="header-title-center">Loma' 選物</h2>
-        <span style="width:40px;"></span>
-      </header>
-
-      <!-- 分類標籤列 -->
-      <div class="tabs-row">
-        <button class="tab-pill active" data-shop-filter="all">全部</button>
-        <button class="tab-pill" data-shop-filter="weave">編織</button>
-        <button class="tab-pill" data-shop-filter="scent">香氛</button>
-        <button class="tab-pill" data-shop-filter="clay">陶藝</button>
+      
+      <!-- Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 0 8px; flex-shrink:0;">
+        <button onclick="history.back()" style="background:rgba(255,255,255,0.08); border:none; width:38px; height:38px; border-radius:50%; display:flex; justify-content:center; align-items:center; color:#fff; cursor:pointer;">
+          <i data-lucide="chevron-left" style="width:20px;height:20px;"></i>
+        </button>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-family-serif); font-size:1.4rem; font-weight:700; color:#ffffff;">Loma' 精選</div>
+          <div style="font-size:0.72rem; color:var(--color-amber); margin-top:4px; letter-spacing:0.1em;">原創城市精選</div>
+        </div>
+        <div style="width:38px;"></div>
       </div>
 
-      <!-- 商品卡片列表 -->
-      <div class="product-list-vertical" id="product-list">
-        <!-- 商品 1 -->
-        <div class="product-card" data-category="weave">
-          <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400" alt="手作包" class="product-img">
-          <div class="product-info">
-            <div class="product-header-row">
-              <span class="product-brand-tag">原青手作工坊 ｜ 阿美族</span>
-              <h4 class="product-title">Alofo 編織手作包</h4>
-            </div>
-            <div class="product-price-row">
-              <span class="product-price">NT$ 1,800</span>
-              <button class="btn-buy-action">前往選品 <i data-lucide="arrow-right"></i></button>
+      <!-- 分類篩選按鈕 -->
+      <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:16px; flex-shrink:0;">
+        <button class="shop-filter-btn active" data-filter="all" onclick="filterShop(this,'all')" style="white-space:nowrap; padding:7px 16px; background:var(--color-amber); border:none; border-radius:99px; color:#071426; font-size:0.78rem; font-weight:600; cursor:pointer;">全部</button>
+        <button class="shop-filter-btn" data-filter="life" onclick="filterShop(this,'life')" style="white-space:nowrap; padding:7px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer;">生活用品</button>
+        <button class="shop-filter-btn" data-filter="fashion" onclick="filterShop(this,'fashion')" style="white-space:nowrap; padding:7px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer;">服飾</button>
+        <button class="shop-filter-btn" data-filter="food" onclick="filterShop(this,'food')" style="white-space:nowrap; padding:7px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer;">飲食</button>
+        <button class="shop-filter-btn" data-filter="craft" onclick="filterShop(this,'craft')" style="white-space:nowrap; padding:7px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer;">工藝</button>
+      </div>
+
+      <!-- 商品列表 -->
+      <div style="display:flex; flex-direction:column; gap:16px; flex:1; overflow-y:auto; padding-bottom:16px;">
+
+        <!-- 商品卡 1 -->
+        <div class="shop-big-card" onclick="openShopModal(0)" data-category="fashion" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
+          <div style="display:flex; gap:0;">
+            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
+            <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
+              <div>
+                <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:4px;">原青手作工坊</div>
+                <div style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:2px; font-family:var(--font-family-serif);">Alofo 編織手作包</div>
+                <div style="font-size:0.68rem; color:var(--color-silver-70); margin-bottom:8px;">阿美族創業品牌</div>
+                <div style="font-size:0.68rem; color:var(--color-amber); margin-bottom:4px;">本週推薦：編織手作包</div>
+                <div style="font-size:0.72rem; color:var(--color-silver-70); line-height:1.5;">每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性.</div>
+              </div>
+              <div style="text-align:right; margin-top:8px;">
+                <button onclick="event.stopPropagation(); window.open('#','_blank')" style="padding:7px 14px; background:var(--color-amber); border:none; border-radius:8px; color:#071426; font-size:0.75rem; font-weight:600; cursor:pointer;">前往購買 →</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 商品 2 -->
-        <div class="product-card" data-category="scent">
-          <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400" alt="香氛蠟燭" class="product-img">
-          <div class="product-info">
-            <div class="product-header-row">
-              <span class="product-brand-tag">山海氣味所 ｜ 排灣族</span>
-              <h4 class="product-title">Sangpi 海岸香氛蠟燭</h4>
-            </div>
-            <div class="product-price-row">
-              <span class="product-price">NT$ 680</span>
-              <button class="btn-buy-action">前往選品 <i data-lucide="arrow-right"></i></button>
+        <!-- 商品卡 2 -->
+        <div class="shop-big-card" onclick="openShopModal(1)" data-category="life" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
+          <div style="display:flex; gap:0;">
+            <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
+            <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
+              <div>
+                <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:4px;">山海氣味所</div>
+                <div style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:2px; font-family:var(--font-family-serif);">Sangpi 海岸香氛蠟燭</div>
+                <div style="font-size:0.68rem; color:var(--color-silver-70); margin-bottom:8px;">排灣族創業品牌</div>
+                <div style="font-size:0.68rem; color:var(--color-amber); margin-bottom:4px;">本週推薦：海岸氣味蠟燭</div>
+                <div style="font-size:0.72rem; color:var(--color-silver-70); line-height:1.5;">以山林、海洋與土地的氣味，陪伴你度過每個深夜時刻.</div>
+              </div>
+              <div style="text-align:right; margin-top:8px;">
+                <button onclick="event.stopPropagation(); window.open('#','_blank')" style="padding:7px 14px; background:var(--color-amber); border:none; border-radius:8px; color:#071426; font-size:0.75rem; font-weight:600; cursor:pointer;">前往購買 →</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 商品 3 -->
-        <div class="product-card" data-category="clay">
-          <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400" alt="陶杯" class="product-img">
-          <div class="product-info">
-            <div class="product-header-row">
-              <span class="product-brand-tag">原森製物 ｜ 泰雅族</span>
-              <h4 class="product-title">原民圖紋陶杯</h4>
-            </div>
-            <div class="product-price-row">
-              <span class="product-price">NT$ 950</span>
-              <button class="btn-buy-action">前往選品 <i data-lucide="arrow-right"></i></button>
+        <!-- 商品卡 3 -->
+        <div class="shop-big-card" onclick="openShopModal(2)" data-category="craft" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
+          <div style="display:flex; gap:0;">
+            <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
+            <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
+              <div>
+                <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:4px;">原森製物</div>
+                <div style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:2px; font-family:var(--font-family-serif);">原民圖紋陶杯</div>
+                <div style="font-size:0.68rem; color:var(--color-silver-70); margin-bottom:8px;">泰雅族創業品牌</div>
+                <div style="font-size:0.68rem; color:var(--color-amber); margin-bottom:4px;">本週推薦：圖紋陶杯</div>
+                <div style="font-size:0.72rem; color:var(--color-silver-70); line-height:1.5;">取材於泰雅族傳統圖紋，在日常中感受文化的溫度.</div>
+              </div>
+              <div style="text-align:right; margin-top:8px;">
+                <button onclick="event.stopPropagation(); window.open('#','_blank')" style="padding:7px 14px; background:var(--color-amber); border:none; border-radius:8px; color:#071426; font-size:0.75rem; font-weight:600; cursor:pointer;">前往購買 →</button>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- 底部說明文字 -->
+        <div style="text-align:center; padding:16px 0; color:var(--color-silver-70); font-size:0.78rem; line-height:1.8;">
+          每個選品的背後，<br>都是都市原青的創意與用心。
+          <div style="margin-top:8px; color:var(--color-amber);">〜</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 商品彈跳視窗 -->
+    <div id="shop-modal-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.7); z-index:300; justify-content:center; align-items:flex-end;" onclick="closeShopModal()">
+      <div id="shop-modal-panel" style="background:rgba(7,20,38,0.98); border-top:1px solid rgba(212,165,116,0.2); border-radius:24px 24px 0 0; padding:24px; width:100%; max-height:80%; overflow-y:auto;" onclick="event.stopPropagation()">
+        <div style="width:36px; height:4px; background:rgba(255,255,255,0.2); border-radius:99px; margin:0 auto 20px;"></div>
+        <img id="modal-img" src="" style="width:100%; height:240px; object-fit:contain; background:#020b18; border-radius:12px; margin-bottom:16px;">
+        <div id="modal-brand" style="font-size:0.72rem; color:var(--color-amber); margin-bottom:4px;"></div>
+        <div id="modal-name" style="font-family:var(--font-family-serif); font-size:1.2rem; font-weight:700; color:#fff; margin-bottom:4px;"></div>
+        <div id="modal-tribe" style="font-size:0.72rem; color:var(--color-silver-70); margin-bottom:12px;"></div>
+        <div id="modal-desc" style="font-size:0.82rem; color:var(--color-silver-70); line-height:1.7; margin-bottom:20px;"></div>
+        <button id="modal-buy-btn" onclick="" style="width:100%; padding:14px; background:var(--color-amber); border:none; border-radius:12px; color:#071426; font-size:0.9rem; font-weight:600; cursor:pointer;">前往購買 →</button>
       </div>
     </div>
 
     <!-- ==========================================
          【畫面 4】地圖 id="screen-map"
          ========================================== -->
-    <div class="screen" id="screen-map">
-      <header class="screen-header">
-        <span style="width:40px;"></span>
-        <h2 class="header-title-center">都市原民地圖</h2>
-        <span style="width:40px;"></span>
-      </header>
+    <div class="screen" id="screen-map" style="padding:0; overflow:hidden;">
 
-      <!-- 分類標籤 -->
-      <div class="tabs-row">
-        <button class="tab-pill active" data-map-filter="all">全部</button>
-        <button class="tab-pill" data-map-filter="culture">文化空間</button>
-        <button class="tab-pill" data-map-filter="business">創業據點</button>
-        <button class="tab-pill" data-map-filter="market">原民市集</button>
+      <!-- 頂部 header 固定 -->
+      <div style="position:absolute; top:0; left:0; right:0; z-index:10; padding:16px 20px 12px; background:linear-gradient(to bottom, rgba(1,3,8,0.95) 70%, transparent); flex-shrink:0;">
+        <h2 style="font-family:var(--font-family-serif); font-size:1.1rem; font-weight:700; color:#fff; text-align:center; margin:0 0 12px 0;">都市原民地圖</h2>
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
+          <button class="map-filter-btn active" onclick="filterMap(this,'all')" style="white-space:nowrap; padding:6px 14px; background:var(--color-amber); border:none; border-radius:99px; color:#071426; font-size:0.75rem; font-weight:600; cursor:pointer;">全部</button>
+          <button class="map-filter-btn" onclick="filterMap(this,'culture')" style="white-space:nowrap; padding:6px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.75rem; cursor:pointer;">文化空間</button>
+          <button class="map-filter-btn" onclick="filterMap(this,'startup')" style="white-space:nowrap; padding:6px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.75rem; cursor:pointer;">創業據點</button>
+          <button class="map-filter-btn" onclick="filterMap(this,'market')" style="white-space:nowrap; padding:6px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:99px; color:var(--color-silver-70); font-size:0.75rem; cursor:pointer;">原民市集</button>
+        </div>
       </div>
 
-      <!-- 地圖佔位區 -->
-      <div class="map-canvas-container">
-        <div class="map-ambient-circles"></div>
-        <i data-lucide="compass" style="width:36px; height:36px; color:var(--color-amber); z-index:2;"></i>
-        <span class="map-status-text">互動地圖即將上線</span>
-      </div>
+      <!-- 地圖容器 -->
+      <div id="leaflet-map" style="width:100%; height:100%; position:absolute; inset:0; z-index:1;"></div>
 
-      <!-- 地點卡片列表 -->
-      <div class="map-pins-list" id="map-location-list">
-        <!-- 地點 1 -->
-        <div class="location-item-card" data-map-category="culture" data-index="0">
-          <div class="location-item-header">
-            <h4 class="location-item-title">凱達格蘭文化館</h4>
-            <span class="location-type-tag">文化空間</span>
-          </div>
-          <p class="location-item-desc">臺北市原住民族文化推廣與展示空間，融合藝術展覽與都市文化交流。</p>
-          <div class="event-detail-item">
-            <i data-lucide="map-pin"></i>
-            <span>台北市中正區凱達格蘭大道 3-1 號</span>
-          </div>
+      <!-- 地圖彈跳資訊視窗 -->
+      <div id="map-pin-popup" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(7,20,38,0.97); border:1px solid rgba(212,165,116,0.3); border-radius:16px; padding:16px; width:80%; max-width:300px; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+        <button onclick="closeMapPin()" style="position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.08); border:none; width:26px; height:26px; border-radius:50%; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.8rem;">✕</button>
+        <div id="pin-tag" style="font-size:0.65rem; color:var(--color-amber); background:rgba(212,165,116,0.1); padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:8px;"></div>
+        <div id="pin-name" style="font-family:var(--font-family-serif); font-size:1rem; font-weight:700; color:#fff; margin-bottom:6px;"></div>
+        <div id="pin-address" style="font-size:0.72rem; color:var(--color-silver-70); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+          <i data-lucide="map-pin" style="width:12px;height:12px;color:var(--color-amber);flex-shrink:0;"></i>
+          <span id="pin-address-text"></span>
         </div>
-
-        <!-- 地點 2 -->
-        <div class="location-item-card" data-map-category="culture" data-index="1">
-          <div class="location-item-header">
-            <h4 class="location-item-title">台北市原住民族行政大樓</h4>
-            <span class="location-type-tag">文化空間</span>
-          </div>
-          <p class="location-item-desc">都市原住民族的行政與文化服務中心，常舉辦族語振興活動。</p>
-          <div class="event-detail-item">
-            <i data-lucide="map-pin"></i>
-            <span>台北市中正區博愛路 131 號</span>
-          </div>
+        <div id="pin-time" style="font-size:0.72rem; color:var(--color-silver-70); margin-bottom:10px; display:flex; align-items:center; gap:4px;">
+          <i data-lucide="clock" style="width:12px;height:12px;color:var(--color-amber);flex-shrink:0;"></i>
+          <span id="pin-time-text"></span>
         </div>
-
-        <!-- 地點 3 -->
-        <div class="location-item-card" data-map-category="business" data-index="2">
-          <div class="location-item-header">
-            <h4 class="location-item-title">太巴塱文化園區</h4>
-            <span class="location-type-tag">文化部落</span>
-          </div>
-          <p class="location-item-desc">全台最大阿美族部落之一，以竹藺草手工藝及古謠採集著稱。</p>
-          <div class="event-detail-item">
-            <i data-lucide="map-pin"></i>
-            <span>花蓮縣光復鄉大興村</span>
-          </div>
-        </div>
+        <div id="pin-desc" style="font-size:0.75rem; color:var(--color-silver-70); line-height:1.6; margin-bottom:14px;"></div>
+        <button id="pin-link-btn" onclick="" style="width:100%; padding:10px; background:var(--color-amber); border:none; border-radius:10px; color:#071426; font-size:0.82rem; font-weight:600; cursor:pointer;">前往官網 →</button>
       </div>
     </div>
 
@@ -1951,7 +2256,7 @@
     <!-- ==========================================
          全域側滑/底部抽屜區 (Cozy Drawers)
          ========================================== -->
-    
+
     <!-- 抽屜 1: 通知消息抽屜 -->
     <div class="drawer-overlay" id="overlay-notif"></div>
     <div class="drawer-panel" id="drawer-notif">
@@ -1991,7 +2296,7 @@
         <button class="btn-close-drawer" id="btn-close-place"><i data-lucide="x"></i></button>
       </div>
       <span class="place-detail-tag" id="place-tag">文化空間</span>
-      
+
       <div class="place-detail-info-list">
         <div class="place-info-row">
           <i data-lucide="map-pin"></i>
@@ -2013,41 +2318,11 @@
       </button>
     </div>
 
-    <!-- 抽屜 3: 關於 Loma' 選單側欄 -->
-    <div class="drawer-overlay" id="overlay-menu"></div>
-    <div class="drawer-panel" id="drawer-menu">
-      <div class="drawer-header">
-        <h3 class="drawer-title">Loma' 功能選單</h3>
-        <button class="btn-close-drawer" id="btn-close-menu"><i data-lucide="x"></i></button>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <button class="btn-action-primary" onclick="window.navigateTo('screen-moments')" style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
-          <i data-lucide="waves" style="width:16px; height:16px; color:var(--color-amber);"></i>
-          <span>探索文化片刻</span>
-        </button>
-        <button class="btn-action-primary" onclick="window.navigateTo('screen-shop')" style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
-          <i data-lucide="shopping-bag" style="width:16px; height:16px; color:var(--color-amber);"></i>
-          <span>品味部落選物</span>
-        </button>
-        <button class="btn-action-primary" onclick="window.navigateTo('screen-map')" style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
-          <i data-lucide="map-pin" style="width:16px; height:16px; color:var(--color-amber);"></i>
-          <span>查看都會地圖</span>
-        </button>
-        <button class="btn-action-primary" onclick="window.navigateTo('screen-profile')" style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
-          <i data-lucide="user" style="width:16px; height:16px; color:var(--color-amber);"></i>
-          <span>設定個人空間</span>
-        </button>
-      </div>
-      <div style="text-align: center; margin-top: 40px; font-size: 0.72rem; color: var(--color-gray-light);">
-        Loma' Ocean Bar &copy; 2026 都市原民聲音計畫
-      </div>
-    </div>
-
     <!-- 播放頁，預設隱藏 -->
     <div id="moment-player-screen" style="position:absolute; inset:0; z-index:80; display:none; flex-direction:column; background:#010308; overflow-y:auto;">
 
       <!-- 頂部 Header -->
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; position:relative; z-index:3; flex-shrink:0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; flex-shrink:0;">
         <button onclick="closeMomentPlayer()" style="background:rgba(255,255,255,0.08); border:none; width:38px; height:38px; border-radius:50%; display:flex; justify-content:center; align-items:center; color:#fff; cursor:pointer;">
           <i data-lucide="chevron-left" style="width:20px;height:20px;"></i>
         </button>
@@ -2057,15 +2332,15 @@
 
       <!-- 標題文字 -->
       <div style="padding:0 20px 12px; flex-shrink:0;">
-        <div id="moment-player-title" style="font-family:var(--font-family-serif); font-size:1rem; color:rgba(255,255,255,0.85); letter-spacing:0.05em;"></div>
+        <div id="moment-player-title" style="font-family:var(--font-family-serif); font-size:1rem; color:rgba(255,255,255,0.85);"></div>
       </div>
 
-      <!-- 影片播放區（16:9） -->
+      <!-- 影片播放區 16:9 -->
       <div style="position:relative; width:100%; padding-top:56.25%; flex-shrink:0; overflow:hidden;">
         <img id="moment-player-bg" src="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;">
         <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%); z-index:1;"></div>
 
-        <!-- 中間播放按鈕 + 波紋 -->
+        <!-- 中間播放按鈕 -->
         <div style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center; z-index:3;">
           <div style="position:relative; display:flex; justify-content:center; align-items:center;">
             <div class="player-ripple r1"></div>
@@ -2083,7 +2358,7 @@
         </div>
 
         <!-- 進度條 -->
-        <div style="position:absolute; bottom:0; left:0; right:0; z-index:3; display:flex; align-items:center; gap:10px; padding:8px 16px 12px;">
+        <div id="moment-progress-track" style="position:absolute; bottom:0; left:0; right:0; z-index:3; display:flex; align-items:center; gap:10px; padding:8px 16px 12px; cursor:pointer;">
           <i data-lucide="headphones" style="width:14px;height:14px;color:rgba(168,184,200,0.7);"></i>
           <span id="moment-time-current" style="font-size:0.68rem; color:rgba(168,184,200,0.7); min-width:28px;">0:00</span>
           <div style="flex:1; height:3px; background:rgba(255,255,255,0.2); border-radius:2px;">
@@ -2093,11 +2368,11 @@
         </div>
       </div>
 
-      <!-- 以下為可捲動內容 -->
+      <!-- 可捲動內容 -->
       <div style="padding:16px 20px; display:flex; flex-direction:column; gap:16px;">
 
         <!-- 故事卡片 -->
-        <div style="background:rgba(7,20,38,0.7); border:1px solid rgba(212,165,116,0.2); border-radius:16px; padding:16px; backdrop-filter:blur(12px);">
+        <div style="background:rgba(7,20,38,0.7); border:1px solid rgba(212,165,116,0.2); border-radius:16px; padding:16px;">
           <div id="moment-story-name" style="font-family:var(--font-family-serif); font-size:1.1rem; color:var(--color-amber); font-weight:600; margin-bottom:4px;"></div>
           <div id="moment-story-zh" style="font-size:0.85rem; color:#fff; margin-bottom:10px; font-weight:500;"></div>
           <div id="moment-story-text" style="font-size:0.78rem; color:var(--color-silver-70); line-height:1.7; border-left:2px solid rgba(212,165,116,0.4); padding-left:10px;"></div>
@@ -2105,15 +2380,15 @@
 
         <!-- 動作按鈕列 -->
         <div style="display:flex; gap:10px;">
-          <button id="moment-collect-btn" onclick="toggleMomentCollect()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+          <button id="moment-collect-btn" onclick="toggleMomentCollect()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
             <i id="collect-icon" data-lucide="heart" style="width:15px;height:15px;"></i>
             <span id="collect-text">收藏</span>
           </button>
-          <button onclick="downloadMomentCard()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+          <button onclick="downloadMomentCard()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
             <i data-lucide="download" style="width:15px;height:15px;"></i>
             <span>心情小卡</span>
           </button>
-          <button onclick="shareLine()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+          <button onclick="shareLine()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
             <i data-lucide="share-2" style="width:15px;height:15px;"></i>
             <span>LINE 分享</span>
           </button>
@@ -2124,7 +2399,7 @@
           <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.1em; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="sparkles" style="width:13px;height:13px;"></i> 這個故事的選品
           </div>
-          <div id="moment-shop-card" style="display:flex; background:rgba(7,20,38,0.55); border:1px solid rgba(212,165,116,0.2); border-radius:14px; overflow:hidden; cursor:pointer;" onclick="window.navigateTo('screen-shop')">
+          <div id="moment-shop-card" style="display:flex; background:rgba(7,20,38,0.55); border:1px solid rgba(212,165,116,0.2); border-radius:14px; overflow:hidden;">
             <img id="moment-shop-img" src="" style="width:100px; height:100px; object-fit:cover; flex-shrink:0;">
             <div style="padding:12px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
               <div>
@@ -2132,8 +2407,13 @@
                 <div id="moment-shop-name" style="font-size:0.9rem; font-weight:600; color:#fff; margin-bottom:3px;"></div>
                 <div id="moment-shop-desc" style="font-size:0.72rem; color:var(--color-silver-70); line-height:1.4;"></div>
               </div>
-              <div style="text-align:right; margin-top:6px;">
-                <span style="font-size:0.75rem; color:var(--color-amber); font-weight:600;">前往選品 →</span>
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                <button onclick="window.navigateTo('screen-shop')" style="flex:1; padding:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(212,165,116,0.3); border-radius:8px; color:var(--color-amber); font-size:0.68rem; font-weight:500; cursor:pointer;">
+                  看更多
+                </button>
+                <button id="moment-buy-btn" style="flex:1; padding:6px; background:var(--color-amber); border:none; border-radius:8px; color:#071426; font-size:0.68rem; font-weight:600; cursor:pointer;">
+                  直接購買
+                </button>
               </div>
             </div>
           </div>
@@ -2144,16 +2424,11 @@
           <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.1em; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
             <i data-lucide="message-circle" style="width:13px;height:13px;"></i> 族人留言
           </div>
-
-          <!-- 留言輸入 -->
           <div style="display:flex; gap:8px; margin-bottom:16px;">
             <input id="comment-input" type="text" placeholder="分享你的感受或故事..." style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:10px; padding:10px 14px; color:#fff; font-size:0.82rem; outline:none; font-family:var(--font-family-sans);">
             <button onclick="submitComment()" style="padding:10px 14px; background:var(--color-amber); border:none; border-radius:10px; color:#071426; font-size:0.82rem; font-weight:600; cursor:pointer;">送出</button>
           </div>
-
-          <!-- 假留言列表 -->
           <div id="comments-list" style="display:flex; flex-direction:column; gap:12px;">
-
             <div class="comment-item">
               <div class="comment-header">
                 <div class="comment-avatar">阿</div>
@@ -2166,14 +2441,13 @@
               <button class="comment-reply-btn" onclick="toggleReply(this)">
                 <i data-lucide="corner-down-right" style="width:12px;height:12px;"></i> 回覆
               </button>
-              <div class="reply-input-area" style="display:none; margin-top:8px;">
-                <div style="display:flex; gap:6px;">
-                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
+              <div class="reply-input-area" style="display:none;">
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none;">
                   <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
                 </div>
               </div>
             </div>
-
             <div class="comment-item">
               <div class="comment-header">
                 <div class="comment-avatar">排</div>
@@ -2188,180 +2462,116 @@
               </button>
               <div class="reply-input-area" style="display:none;">
                 <div style="display:flex; gap:6px; margin-top:8px;">
-                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
+                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none;">
                   <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- 底部留白 -->
         <div style="height:80px;"></div>
-
       </div>
+    </div>
+
+    <!-- 抽屜 3: 關於 Loma' 選單側欄 -->
+    <div class="drawer-overlay" id="overlay-menu"></div>
+    <div class="drawer-panel" id="drawer-menu">
+      <div class="drawer-header">
+        <h3 class="drawer-title">Loma' 功能選單</h3>
+        <button class="btn-close-drawer" id="btn-close-menu"><i data-lucide="x"></i></button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <button class="btn-action-primary" onclick="window.navigateTo('screen-moments')"
+          style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
+          <i data-lucide="waves" style="width:16px; height:16px; color:var(--color-amber);"></i>
+          <span>探索文化片刻</span>
+        </button>
+        <button class="btn-action-primary" onclick="window.navigateTo('screen-shop')"
+          style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
+          <i data-lucide="shopping-bag" style="width:16px; height:16px; color:var(--color-amber);"></i>
+          <span>品味部落選物</span>
+        </button>
+        <button class="btn-action-primary" onclick="window.navigateTo('screen-map')"
+          style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
+          <i data-lucide="map-pin" style="width:16px; height:16px; color:var(--color-amber);"></i>
+          <span>查看都會地圖</span>
+        </button>
+        <button class="btn-action-primary" onclick="window.navigateTo('screen-profile')"
+          style="background: rgba(255,255,255,0.04); border: 1px solid var(--color-border-glass); color: #ffffff;">
+          <i data-lucide="user" style="width:16px; height:16px; color:var(--color-amber);"></i>
+          <span>設定個人空間</span>
+        </button>
+      </div>
+      <div style="text-align: center; margin-top: 40px; font-size: 0.72rem; color: var(--color-gray-light);">
+        Loma' Ocean Bar &copy; 2026 都市原民聲音計畫
+      </div>
+    </div>
 
   </div>
 
   <script>
-    // ==========================================
-    // 文化時刻二層播放頁資料與引擎
-    // ==========================================
-    const MOMENT_PLAYER_DATA = {
-      night: {
-        title: "深夜的星海，陪你到天亮",
-        amis: "Mahaen kamo",
-        zh: "晚安，大家",
-        story: "阿美族人的晚安不只是道別，是把對方交託給夜晚的星海。",
-        bg: "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=600&q=80"
-      },
-      rain: {
-        title: "雨，是祖先回來探望",
-        amis: "Orad ko uraw",
-        zh: "下雨了",
-        story: "雨，是祖先回來探望的聲音。每一滴打落在都會屋簷的雨，都帶著重重深山的泥土氣味。",
-        bg: "https://images.unsplash.com/photo-1428592953211-077101b2021b?w=600&q=80"
-      },
-      homesick: {
-        title: "歌聲帶我回家",
-        amis: "Papelo ko radiw",
-        zh: "歌聲帶我回家",
-        story: "每一首緩慢悠長的古調，都是一條通往海洋與家鄉的路。在城市裡唱歌的人，靈魂就永遠不會迷路。",
-        bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
-      },
-      hungry: {
-        title: "你今天喝了嗎？",
-        amis: "Mihamis kamo haw?",
-        zh: "你今天喝了嗎？",
-        story: "部落長輩的問候從不是「你好嗎」，而是「你吃了嗎？」飲食即是關懷，每一次的滋養都是最真切的問候。",
-        bg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80"
-      },
-      alofo: {
-        title: "定情的編織，部落的承諾",
-        amis: "Alofo, sasengan ni tinalaw a pinaule.",
-        zh: "情人袋：深夜的避風港",
-        story: "在阿美族人的傳統裡，情人袋不只是日常的陪伴，更是情感的寄託與承諾。",
-        bg: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=80"
-      }
-    };
-
-    let momentPlayerTimer = null;
-    let momentCurrentTime = 0;
-    let momentIsPlaying = false;
-
-    window.openMomentPlayer = function(key) {
-      const data = MOMENT_PLAYER_DATA[key];
-      if (!data) return;
-      
-      document.getElementById('moment-player-bg').src = data.bg;
-      document.getElementById('moment-player-title').textContent = data.title;
-      document.getElementById('moment-amis-text').textContent = data.amis;
-      document.getElementById('moment-story-name').textContent = data.amis;
-      document.getElementById('moment-story-zh').textContent = data.zh;
-      document.getElementById('moment-story-text').textContent = data.story;
-
-      // 帶入選品
-      const shop = MOMENT_SHOP_DATA[key];
-      if (shop) {
-        document.getElementById('moment-shop-img').src = shop.img;
-        document.getElementById('moment-shop-brand').textContent = shop.brand;
-        document.getElementById('moment-shop-name').textContent = shop.name;
-        document.getElementById('moment-shop-desc').textContent = shop.desc;
-      }
-
-      // 重設播放狀態
-      momentCurrentTime = 0;
-      momentIsPlaying = false;
-      document.getElementById('moment-progress-fill').style.width = '0%';
-      document.getElementById('moment-time-current').textContent = '0:00';
-      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
-
-      // 重設收藏按鈕
-      currentMomentKey = key;
-      updateCollectButton();
-
-      document.getElementById('moment-player-screen').style.display = 'flex';
-      
-      // 開啟播放器時，若有其他後台音樂在播則暫停
-      if (howlTodayPlayer && howlTodayPlayer.playing()) howlTodayPlayer.pause();
-      if (howlMomentPlayer && howlMomentPlayer.playing()) howlMomentPlayer.pause();
-
-      lucide.createIcons();
-    };
-
-    window.closeMomentPlayer = function() {
-      document.getElementById('moment-player-screen').style.display = 'none';
-      stopMomentPlayer();
-    };
-
-    window.toggleMomentPlay = function() {
-      momentIsPlaying = !momentIsPlaying;
-      if (momentIsPlaying) {
-        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'pause');
-        momentPlayerTimer = setInterval(() => {
-          momentCurrentTime += 0.1;
-          const pct = Math.min(100, (momentCurrentTime / 30) * 100);
-          document.getElementById('moment-progress-fill').style.width = pct + '%';
-          const secs = Math.floor(momentCurrentTime);
-          document.getElementById('moment-time-current').textContent = '0:' + String(secs).padStart(2,'0');
-          if (momentCurrentTime >= 30) stopMomentPlayer();
-        }, 100);
-      } else {
-        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
-        clearInterval(momentPlayerTimer);
-      }
-      lucide.createIcons();
-    };
-
-    window.stopMomentPlayer = function() {
-      momentIsPlaying = false;
-      clearInterval(momentPlayerTimer);
-      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
-      lucide.createIcons();
-    };
-
     // ==========================================
     // 1. 全域多媒體資源與數據庫定義
     // ==========================================
     const SPLASH_VIDEO_SRC = ""; // 用於歡迎畫面 z-index:0 背景影片
     const TODAY_VIDEO_SRC = "";  // 用於首頁今日片刻 16:9 影片區
 
-    // 心情文化片刻資料
-    const MOOD_DATA = {
+    // 心情文化片刻資料與播放配置
+    const MOMENT_PLAYER_DATA = {
       night: {
         id: "night",
         name: "晚安",
+        title: "深夜的星海，陪你到天亮",
         amis: "Mahaen kamo",
         zh: "晚安，大家",
         story: "阿美族人的晚安不只是道別，是把對方交託給夜晚的星海。深夜裡的濤聲，是祖靈哼唱最古老、最溫柔的催眠曲。",
+        bg: "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=600&q=80",
         audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
       },
       rain: {
         id: "rain",
         name: "下雨",
+        title: "雨，是祖先回來探望",
         amis: "Orad ko uraw",
         zh: "下雨了",
         story: "雨，是祖先回來探望的聲音。每一滴打落在都會屋簷的雨，都帶著重重深山的泥土氣味，提醒著我們來自何方。",
+        bg: "https://images.unsplash.com/photo-1428592953211-077101b2021b?w=600&q=80",
         audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
       },
       homesick: {
         id: "homesick",
         name: "想家",
+        title: "歌聲帶我回家",
         amis: "Papelo ko radiw",
         zh: "歌聲帶我回家",
         story: "每一首緩慢悠長的古調，都是一條通往海洋與家鄉的路。在城市裡唱歌的人，靈魂就永遠不會在水泥迷宮中迷路。",
+        bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
         audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
       },
       hungry: {
         id: "hungry",
         name: "肚子餓",
+        title: "你今天喝了嗎？",
         amis: "Mihamis kamo haw?",
         zh: "你今天喝了嗎？",
         story: "部落長輩的問候從不是高深客套的「你好嗎」，而是溫暖家常的「你吃了嗎？」。飲食即是關懷，每一次的滋養都是最真切的問候。",
+        bg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
         audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      alofo: {
+        id: "alofo",
+        name: "情人袋",
+        title: "定情的編織，部落的承諾",
+        amis: "Alofo, sasengan ni tinalaw a pinaule.",
+        zh: "情人袋：深夜的避風港",
+        story: "在阿美族人的傳統裡，情人袋不只是日常的陪伴，更是情感的寄託與承諾。",
+        bg: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=80",
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
       }
     };
+
+    const MOOD_DATA = MOMENT_PLAYER_DATA;
 
     // 地圖據點資料庫
     const PLACE_DATA = [
@@ -2406,17 +2616,17 @@
       } catch (e) {
         console.log("LINE LIFF SDK 載入異常，進入相容模式運作:", e);
       }
-      
+
       // 動態更新模擬狀態列時間
       updateStatusBarTime();
       setInterval(updateStatusBarTime, 60000);
-      
+
       // 初始化星空動態畫布
       initStarrySkyCanvas();
 
       // 初始化歡迎畫面影音
       initSplashMedia();
-      
+
       // 載入 LocalStorage 使用者姓名與族別資料
       initUserProfile();
 
@@ -2449,7 +2659,7 @@
     function initStarrySkyCanvas() {
       const canvas = document.getElementById("starsCanvas");
       const ctx = canvas.getContext("2d");
-      
+
       // 自適應手機框架大小
       function resizeCanvas() {
         canvas.width = canvas.parentElement.clientWidth;
@@ -2491,7 +2701,7 @@
       // 動態渲染迴圈
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         // 繪製背景微弱極光漸層
         const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
         grad.addColorStop(0, "#010308");
@@ -2550,23 +2760,30 @@
     // 4. 歡迎頁轉場與影音加載
     // ==========================================
     function initSplashMedia() {
-      // 進入按鈕
+      const video = document.getElementById("splash-video");
+      if (SPLASH_VIDEO_SRC) {
+        video.src = SPLASH_VIDEO_SRC;
+        video.load();
+      } else {
+        // 沒有影片時以靜態 Canvas 普魯士藍星河背景為底
+        video.style.display = "none";
+      }
+
       const btnEnter = document.getElementById("btn-enter");
       const splash = document.getElementById("splash-screen");
       const navBar = document.getElementById("app-nav-bar");
 
-      if (!btnEnter) {
-        console.error("找不到 btn-enter！");
-        return;
-      }
-
       btnEnter.addEventListener("click", () => {
-        splash.style.opacity = "0";
-        splash.style.transition = "opacity 0.6s ease";
+        // 歡迎音效觸發 (空靈和弦)
+        playWarmWelcomeChime();
+
+        // 歡迎頁淡出
+        splash.classList.add("fade-out");
         setTimeout(() => {
           splash.style.display = "none";
-          if (navBar) navBar.classList.remove("hidden");
+          // 導向首頁並開啟底部導航列
           window.navigateTo("screen-home");
+          navBar.classList.remove("hidden");
         }, 600);
       });
     }
@@ -2614,33 +2831,47 @@
     // ==========================================
     // 5. SPA 畫面導航 (navigateTo) 與底部導航欄
     // ==========================================
-    window.navigateTo = function(screenId) {
+    window.navigateTo = function (screenId) {
       // 關閉所有抽屜
-      if (typeof closeAllDrawers === 'function') closeAllDrawers();
+      closeAllDrawers();
 
-      document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
-        s.style.removeProperty('display');
-      });
+      // 隱藏所有畫面的 active 狀態
+      const screens = document.querySelectorAll(".screen");
+      screens.forEach(s => s.classList.remove("active"));
 
-      const target = document.getElementById(screenId);
-      if (target) {
-        target.classList.add('active');
+      // 顯示目標畫面
+      const targetScreen = document.getElementById(screenId);
+      if (targetScreen) {
+        targetScreen.classList.add("active");
       }
 
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.classList.remove('active');
+      // 更新底部導航高亮
+      const navItems = document.querySelectorAll(".nav-item");
+      navItems.forEach(item => {
+        const clickAttr = item.getAttribute("onclick") || "";
+        if (clickAttr.includes(screenId)) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
       });
 
-      const activeNav = document.querySelector(`.nav-item[onclick*="${screenId}"]`);
-      if (activeNav) activeNav.classList.add('active');
-
       // 當切換到個人頁面時，動態渲染收藏夾列表
-      if (screenId === "screen-profile" && typeof renderBookmarks === 'function') {
+      if (screenId === "screen-profile") {
         renderBookmarks();
       }
 
-      lucide.createIcons();
+      // 重新渲染 Lucide 圖示，確保切換頁面後新動態產生的 icon 正常顯示
+      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+
+      if (screenId === 'screen-map') {
+        setTimeout(() => {
+          initLomaMap();
+          if (lomaMap) lomaMap.invalidateSize();
+        }, 100);
+      }
     };
 
     // ==========================================
@@ -2733,10 +2964,111 @@
     // ==========================================
     let currentActiveMood = "night";
     let howlTodayPlayer = null;
-    let howlMomentPlayer = null;
-
     let timerToday = null;
-    let timerMoment = null;
+
+    let momentPlayerTimer = null;
+    let momentCurrentTime = 0;
+    let momentIsPlaying = false;
+    let howlerMomentInstance = null;
+
+    function openMomentPlayer(key) {
+      const data = MOMENT_PLAYER_DATA[key];
+      if (!data) return;
+
+      // Stop and unload previous Howler instance if exists
+      if (howlerMomentInstance) {
+        howlerMomentInstance.stop();
+        howlerMomentInstance.unload();
+        howlerMomentInstance = null;
+      }
+
+      // Create new Howler instance
+      howlerMomentInstance = new Howl({
+        src: [data.audio],
+        html5: true,
+        volume: 0.8
+      });
+
+      document.getElementById('moment-player-bg').src = data.bg;
+      document.getElementById('moment-player-title').textContent = data.title;
+      document.getElementById('moment-amis-text').textContent = data.amis;
+      document.getElementById('moment-story-name').textContent = data.amis;
+      document.getElementById('moment-story-zh').textContent = data.zh;
+      document.getElementById('moment-story-text').textContent = data.story;
+
+      // 帶入選品
+      const shop = MOMENT_SHOP_DATA[key];
+      if (shop) {
+        document.getElementById('moment-shop-img').src = shop.img;
+        document.getElementById('moment-shop-brand').textContent = shop.brand;
+        document.getElementById('moment-shop-name').textContent = shop.name;
+        document.getElementById('moment-shop-desc').textContent = shop.desc;
+        
+        const buyBtn = document.getElementById('moment-buy-btn');
+        if (buyBtn) {
+          buyBtn.onclick = () => window.open(shop.link || '#', '_blank');
+        }
+      }
+
+      // 重設播放狀態
+      momentCurrentTime = 0;
+      momentIsPlaying = false;
+      document.getElementById('moment-progress-fill').style.width = '0%';
+      document.getElementById('moment-time-current').textContent = '0:00';
+      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+
+      // 重設收藏按鈕
+      currentMomentKey = key;
+      updateCollectButton();
+
+      document.getElementById('moment-player-screen').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function closeMomentPlayer() {
+      document.getElementById('moment-player-screen').style.display = 'none';
+      stopMomentPlayer();
+    }
+
+    function toggleMomentPlay() {
+      if (!howlerMomentInstance) return;
+      momentIsPlaying = !momentIsPlaying;
+      if (momentIsPlaying) {
+        // Stop today's player if it is playing
+        if (howlTodayPlayer && howlTodayPlayer.playing()) {
+          howlTodayPlayer.pause();
+        }
+
+        howlerMomentInstance.play();
+        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'pause');
+
+        clearInterval(momentPlayerTimer);
+        momentPlayerTimer = setInterval(() => {
+          // Sync with Howler seek position
+          momentCurrentTime = howlerMomentInstance.seek() || 0;
+          const pct = Math.min(100, (momentCurrentTime / 30) * 100);
+          document.getElementById('moment-progress-fill').style.width = pct + '%';
+          const secs = Math.floor(momentCurrentTime);
+          document.getElementById('moment-time-current').textContent = '0:' + String(secs).padStart(2, '0');
+          if (momentCurrentTime >= 30) stopMomentPlayer();
+        }, 100);
+      } else {
+        howlerMomentInstance.pause();
+        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+        clearInterval(momentPlayerTimer);
+      }
+      lucide.createIcons();
+    }
+
+    function stopMomentPlayer() {
+      momentIsPlaying = false;
+      clearInterval(momentPlayerTimer);
+      if (howlerMomentInstance) {
+        howlerMomentInstance.stop();
+      }
+      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+    }
 
     function initAudioPlayers() {
       // 1. 初始化今日片刻視訊背景
@@ -2770,84 +3102,48 @@
       });
 
       // 綁定今日片刻播放按鈕 (全域可用，搭配 inline onclick="toggleTodayPlay()")
-      window.toggleTodayPlay = function() {
+      window.toggleTodayPlay = function () {
         if (howlTodayPlayer.playing()) {
           howlTodayPlayer.pause();
         } else {
           // 播放前暫停另一個播放器
-          if (howlMomentPlayer && howlMomentPlayer.playing()) howlMomentPlayer.pause();
+          stopMomentPlayer();
           howlTodayPlayer.play();
         }
       };
 
       // 綁定今日片刻進度條尋道 (Seek)
       const todayBar = document.getElementById("today-progress-container");
-      todayBar.addEventListener("click", (e) => {
-        const rect = todayBar.getBoundingClientRect();
-        const pct = (e.clientX - rect.left) / rect.width;
-        // 今日古調限制 30 秒
-        const targetTime = Math.min(howlTodayPlayer.duration(), 30) * pct;
-        howlTodayPlayer.seek(targetTime);
-        updateProgressUi("today", targetTime);
-      });
-
-      // 2. 舊文化片刻播放器已棄用，改由二層 moment-player-screen 接管
-    }
-
-    // 載入心情與古調音軌
-    function loadMoodContent(moodKey) {
-      currentActiveMood = moodKey;
-      const data = MOOD_DATA[moodKey];
-      
-      // 暫停原播放器
-      if (howlMomentPlayer) {
-        howlMomentPlayer.unload();
+      if (todayBar) {
+        todayBar.addEventListener("click", (e) => {
+          const rect = todayBar.getBoundingClientRect();
+          const pct = (e.clientX - rect.left) / rect.width;
+          // 今日古調限制 30 秒
+          const targetTime = Math.min(howlTodayPlayer.duration(), 30) * pct;
+          howlTodayPlayer.seek(targetTime);
+          updateProgressUi("today", targetTime);
+        });
       }
 
-      // 更新文字與故事資訊
-      document.getElementById("moment-text-native").textContent = data.amis;
-      document.getElementById("moment-text-zh").textContent = data.zh;
-      document.getElementById("moment-story-desc").textContent = data.story;
-
-      // 變更播放器視覺大圓發光與卡片漸層底色
-      const visualBox = document.querySelector(".moment-placeholder-visual");
-      if (moodKey === "night") {
-        visualBox.style.background = "linear-gradient(135deg, #020b1e 0%, #010308 100%)";
-      } else if (moodKey === "rain") {
-        visualBox.style.background = "linear-gradient(135deg, #051630 0%, #020813 100%)";
-      } else if (moodKey === "homesick") {
-        visualBox.style.background = "linear-gradient(135deg, #0c1a30 0%, #010206 100%)";
-      } else if (moodKey === "hungry") {
-        visualBox.style.background = "linear-gradient(135deg, #111a2e 0%, #000205 100%)";
+      // 2. 初始化心情片刻進度條尋道 (Seek)
+      const track = document.getElementById('moment-progress-track');
+      if (track) {
+        track.addEventListener('click', (e) => {
+          const rect = track.getBoundingClientRect();
+          const pct = (e.clientX - rect.left) / rect.width;
+          const targetTime = 30 * pct;
+          momentCurrentTime = targetTime;
+          if (howlerMomentInstance) {
+            howlerMomentInstance.seek(targetTime);
+          }
+          document.getElementById('moment-progress-fill').style.width = (pct * 100) + '%';
+          const secs = Math.floor(momentCurrentTime);
+          document.getElementById('moment-time-current').textContent = '0:' + String(secs).padStart(2, '0');
+        });
       }
-
-      // 初始化 Howler 音訊音軌
-      howlMomentPlayer = new Howl({
-        src: [data.audio],
-        html5: true,
-        volume: 0.8,
-        onplay: () => {
-          updatePlayIconState("moment-play-icon", true);
-          startTimerLoop("moment");
-        },
-        onpause: () => {
-          updatePlayIconState("moment-play-icon", false);
-          clearInterval(timerMoment);
-        },
-        onend: () => {
-          updatePlayIconState("moment-play-icon", false);
-          resetAudioProgress("moment");
-        }
-      });
-
-      // 初始化進度與倒數
-      resetAudioProgress("moment");
-      
-      // 更新收藏按鈕的 UI 狀態
-      updateCollectBtnState(moodKey);
     }
 
-    // 計時器更新循環
+    // 計時器更新循環 (主要供今日片刻使用)
     function startTimerLoop(type) {
       if (type === "today") {
         clearInterval(timerToday);
@@ -2855,7 +3151,7 @@
           if (howlTodayPlayer && howlTodayPlayer.playing()) {
             const seekTime = howlTodayPlayer.seek();
             updateProgressUi("today", seekTime);
-            
+
             // 限制 30 秒自動停止
             if (seekTime >= 30) {
               howlTodayPlayer.stop();
@@ -2863,27 +3159,15 @@
             }
           }
         }, 200);
-      } else if (type === "moment") {
-        clearInterval(timerMoment);
-        timerMoment = setInterval(() => {
-          if (howlMomentPlayer && howlMomentPlayer.playing()) {
-            const seekTime = howlMomentPlayer.seek();
-            updateProgressUi("moment", seekTime);
-
-            if (seekTime >= 30) {
-              howlMomentPlayer.stop();
-              resetAudioProgress("moment");
-            }
-          }
-        }, 200);
       }
     }
 
-    // 更新進度條與剩餘時間數字
+    // 更新進度條與剩餘時間數字 (主要供今日片刻使用)
     function updateProgressUi(type, seekTime) {
       const fillEl = document.getElementById(`${type}-progress-fill`);
       const timerEl = document.getElementById(`${type}-timer`);
-      
+      if (!fillEl || !timerEl) return;
+
       // 限制 30 秒為基準
       const pct = Math.min(100, (seekTime / 30) * 100);
       fillEl.style.width = `${pct}%`;
@@ -2899,7 +3183,6 @@
       if (fillEl) fillEl.style.width = "0%";
       if (timerEl) timerEl.textContent = "30s";
       if (type === "today") clearInterval(timerToday);
-      if (type === "moment") clearInterval(timerMoment);
     }
 
     // 播放/暫停按鈕 Icon 轉換
@@ -2926,7 +3209,7 @@
 
     const overlayNotif = document.getElementById("overlay-notif");
     const drawerNotif = document.getElementById("drawer-notif");
-    
+
     const overlayPlace = document.getElementById("overlay-place");
     const drawerPlace = document.getElementById("drawer-place");
 
@@ -2982,7 +3265,7 @@
     function closeAllDrawers() {
       overlayNotif.classList.remove("active");
       drawerNotif.classList.remove("active");
-      
+
       overlayPlace.classList.remove("active");
       drawerPlace.classList.remove("active");
 
@@ -2993,17 +3276,17 @@
     // ==========================================
     // 10. 商品與地圖分類篩選 (Filter tab logic)
     // ==========================================
-    
+
     // 商品篩選
     const shopPills = document.querySelectorAll("[data-shop-filter]");
     shopPills.forEach(pill => {
       pill.addEventListener("click", () => {
         shopPills.forEach(p => p.classList.remove("active"));
         pill.classList.add("active");
-        
+
         const filter = pill.getAttribute("data-shop-filter");
         const cards = document.querySelectorAll("#product-list .product-card");
-        
+
         cards.forEach(card => {
           if (filter === "all" || card.getAttribute("data-category") === filter) {
             card.style.display = "flex";
@@ -3014,25 +3297,7 @@
       });
     });
 
-    // 地圖篩選
-    const mapPills = document.querySelectorAll("[data-map-filter]");
-    mapPills.forEach(pill => {
-      pill.addEventListener("click", () => {
-        mapPills.forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        
-        const filter = pill.getAttribute("data-map-filter");
-        const cards = document.querySelectorAll("#map-location-list .location-item-card");
-        
-        cards.forEach(card => {
-          if (filter === "all" || card.getAttribute("data-map-category") === filter) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      });
-    });
+
 
     // ==========================================
     // 11. 收藏夾 (Bookmarks) 持久化管理
@@ -3094,126 +3359,261 @@
               <h4>${data.amis}</h4>
               <p>${data.zh}</p>
             `;
-            // 點擊卡片跳轉並打開文化時刻播放頁
+            // 點擊卡片跳轉回心情片刻畫面並播放
             card.addEventListener("click", () => {
+              window.navigateTo("screen-moments");
               openMomentPlayer(moodKey);
             });
             grid.appendChild(card);
           }
         });
+      }
     }
 
     // ==========================================
-    // 文化片刻二層播放頁附屬功能與互動引擎
+    // Loma' 文化時刻 播放器附加控制功能 (心情小卡、收藏、LINE分享、族人留言)
     // ==========================================
+    let currentMomentKey = "night";
 
-    // 選品配對資料
     const MOMENT_SHOP_DATA = {
       night: {
-        brand: "山海氣味所",
+        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400",
+        brand: "山海氣味所 ｜ 排灣族",
         name: "Sangpi 海岸香氛蠟燭",
-        desc: "以山林、海洋與土地的氣味，陪伴你度過每個深夜時刻。",
-        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=300&q=80"
+        desc: "採用天然大豆蠟與純香氛，模擬山林營火的溫暖柴香，在深夜為你帶來溫暖的光。",
+        link: "#"
       },
       rain: {
-        brand: "山海氣味所",
-        name: "Sangpi 海岸香氛蠟燭",
-        desc: "雨天點燃，讓山林氣味填滿整個房間。",
-        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=300&q=80"
+        img: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400",
+        brand: "原森製物 ｜ 泰雅族",
+        name: "原民圖紋陶杯",
+        desc: "手作陶杯保留了泥土粗獷的手感與落灰釉色，將大地的溫度緊緊握在手裡。",
+        link: "#"
       },
       homesick: {
-        brand: "原青手作工坊",
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400",
+        brand: "原青手作工坊 ｜ 阿美族",
         name: "Alofo 編織手作包",
-        desc: "每個包都用阿美族傳統編織手法完成，帶著家鄉的溫度。",
-        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+        desc: "以阿美族傳統編織手法手工完成，將傳統圖騰融合現代美學與日常實用性。",
+        link: "#"
       },
       hungry: {
-        brand: "原青手作工坊",
-        name: "Alofo 編織手作包",
-        desc: "把部落的味道帶進城市日常。",
-        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+        img: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400",
+        brand: "原森製物 ｜ 泰雅族",
+        name: "原民圖紋陶杯",
+        desc: "肚子餓了？喝一杯熱騰騰的樹豆排骨湯，用這款手作陶杯盛裝，最是暖心溫暖。",
+        link: "#"
       },
       alofo: {
-        brand: "原青手作工坊",
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400",
+        brand: "原青手作工坊 ｜ 阿美族",
         name: "Alofo 編織手作包",
-        desc: "每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性。",
-        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+        desc: "以阿美族傳統編織手法手工完成，將傳統圖騰融合現代美學與日常實用性。",
+        link: "#"
       }
     };
 
-    // 收藏功能
-    let currentMomentKey = '';
-
-    window.toggleMomentCollect = function() {
-      let bookmarks = JSON.parse(localStorage.getItem('loma_bookmarks') || '[]');
-      if (bookmarks.includes(currentMomentKey)) {
-        bookmarks = bookmarks.filter(x => x !== currentMomentKey);
-      } else {
-        bookmarks.push(currentMomentKey);
-      }
-      localStorage.setItem('loma_bookmarks', JSON.stringify(bookmarks));
-      updateCollectButton();
-      
-      // 同步更新個人收藏夾 UI
-      if (typeof renderBookmarks === 'function') {
-        renderBookmarks();
-      }
-    };
-
-    window.updateCollectButton = function() {
-      const bookmarks = JSON.parse(localStorage.getItem('loma_bookmarks') || '[]');
+    function updateCollectButton() {
+      const bookmarks = getBookmarks();
       const isCollected = bookmarks.includes(currentMomentKey);
-      const icon = document.getElementById('collect-icon');
-      const text = document.getElementById('collect-text');
+      const icon = document.getElementById("collect-icon");
+      const text = document.getElementById("collect-text");
       if (icon && text) {
         if (isCollected) {
-          icon.style.fill = 'var(--color-amber)';
-          icon.style.color = 'var(--color-amber)';
-          text.textContent = '已收藏';
+          icon.style.fill = "var(--color-amber)";
+          icon.style.color = "var(--color-amber)";
+          text.textContent = "已收藏";
         } else {
-          icon.style.fill = 'none';
-          icon.style.color = 'var(--color-silver-70)';
-          text.textContent = '收藏';
+          icon.style.fill = "none";
+          icon.style.color = "var(--color-silver-70)";
+          text.textContent = "收藏";
         }
       }
-    };
+    }
 
-    // 下載心情小卡（暫時 alert）
-    window.downloadMomentCard = function() {
-      alert('心情小卡下載功能即將上線 🌊');
-    };
+    function toggleMomentCollect() {
+      toggleBookmark(currentMomentKey);
+      updateCollectButton();
+      renderBookmarks();
+    }
 
-    // LINE 分享
-    window.shareLine = function() {
-      const data = MOMENT_PLAYER_DATA[currentMomentKey];
+    function downloadMomentCard() {
+      const data = MOOD_DATA[currentMomentKey];
       if (!data) return;
-      const text = encodeURIComponent(`「${data.amis}」— ${data.zh}\n\n${data.story}\n\nLoma' 海洋喝吧`);
-      window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
-    };
 
-    // 回覆按鈕切換
-    window.toggleReply = function(btn) {
-      const replyArea = btn.nextElementSibling;
-      if (replyArea) {
-        const isHidden = replyArea.style.display === 'none' || replyArea.style.display === '';
-        replyArea.style.display = isHidden ? 'block' : 'none';
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 800;
+      const ctx = canvas.getContext("2d");
+
+      const grad = ctx.createLinearGradient(0, 0, 0, 800);
+      grad.addColorStop(0, "#071426");
+      grad.addColorStop(0.5, "#010308");
+      grad.addColorStop(1, "#071426");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 600, 800);
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      for (let i = 0; i < 40; i++) {
+        const sx = Math.random() * 600;
+        const sy = Math.random() * 600;
+        const size = Math.random() * 2 + 0.5;
+        ctx.beginPath();
+        ctx.arc(sx, sy, size, 0, Math.PI * 2);
+        ctx.fill();
       }
-    };
 
-    // 新增留言
-    window.submitComment = function() {
-      const input = document.getElementById('comment-input');
+      ctx.strokeStyle = "rgba(212, 165, 116, 0.35)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(20, 20, 560, 760);
+
+      ctx.strokeStyle = "rgba(212, 165, 116, 0.15)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(28, 28, 544, 744);
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(212, 165, 116, 0.9)";
+      ctx.font = "bold 20px 'Noto Serif TC', serif";
+      ctx.fillText("Loma' 文化時刻", 300, 70);
+
+      ctx.fillStyle = "rgba(168, 184, 200, 0.5)";
+      ctx.font = "12px 'Outfit', sans-serif";
+      ctx.fillText("讓語言在城市，有個家", 300, 95);
+
+      ctx.strokeStyle = "rgba(212, 165, 116, 0.25)";
+      ctx.beginPath();
+      ctx.moveTo(150, 120);
+      ctx.lineTo(450, 120);
+      ctx.stroke();
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function() {
+        ctx.drawImage(img, 120, 150, 360, 200);
+        ctx.strokeStyle = "rgba(212, 165, 116, 0.4)";
+        ctx.strokeRect(120, 150, 360, 200);
+
+        ctx.fillStyle = "#d4a574";
+        ctx.font = "italic bold 32px 'Noto Serif TC', serif";
+        ctx.fillText(data.amis, 300, 400);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 20px 'Noto Serif TC', serif";
+        ctx.fillText(data.zh, 300, 440);
+
+        ctx.fillStyle = "rgba(168, 184, 200, 0.85)";
+        ctx.font = "15px 'Noto Serif TC', serif";
+        const content = data.story;
+        const words = content.split("");
+        let line = "";
+        let y = 500;
+        const lineMax = 22;
+        for (let n = 0; n < words.length; n++) {
+          line += words[n];
+          if (line.length >= lineMax || n === words.length - 1) {
+            ctx.fillText(line, 300, y);
+            line = "";
+            y += 28;
+          }
+        }
+
+        ctx.fillStyle = "rgba(212, 165, 116, 0.6)";
+        ctx.font = "italic 13px 'Noto Serif TC', serif";
+        ctx.fillText("— Loma' Ocean Bar 都市原民聲音計畫 —", 300, 720);
+
+        const link = document.createElement("a");
+        link.download = `loma-moment-${currentMomentKey}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      };
+      
+      img.onerror = function() {
+        ctx.fillStyle = "rgba(7, 20, 38, 0.6)";
+        ctx.fillRect(120, 150, 360, 200);
+        ctx.fillStyle = "rgba(212, 165, 116, 0.4)";
+        ctx.font = "14px sans-serif";
+        ctx.fillText("Sea & Stars Ambient Visual", 300, 255);
+
+        ctx.fillStyle = "#d4a574";
+        ctx.font = "italic bold 32px 'Noto Serif TC', serif";
+        ctx.fillText(data.amis, 300, 400);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 20px 'Noto Serif TC', serif";
+        ctx.fillText(data.zh, 300, 440);
+
+        ctx.fillStyle = "rgba(168, 184, 200, 0.85)";
+        ctx.font = "15px 'Noto Serif TC', serif";
+        const content = data.story;
+        const words = content.split("");
+        let line = "";
+        let y = 500;
+        const lineMax = 22;
+        for (let n = 0; n < words.length; n++) {
+          line += words[n];
+          if (line.length >= lineMax || n === words.length - 1) {
+            ctx.fillText(line, 300, y);
+            line = "";
+            y += 28;
+          }
+        }
+
+        ctx.fillStyle = "rgba(212, 165, 116, 0.6)";
+        ctx.font = "italic 13px 'Noto Serif TC', serif";
+        ctx.fillText("— Loma' Ocean Bar 都市原民聲音計畫 —", 300, 720);
+
+        const link = document.createElement("a");
+        link.download = `loma-moment-${currentMomentKey}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      };
+
+      img.src = data.bg;
+    }
+
+    function shareLine() {
+      const data = MOOD_DATA[currentMomentKey];
+      if (!data) return;
+
+      const shareText = `【Loma' 文化時刻】 ${data.title}\n「${data.amis}」— ${data.zh}\n\n在城市的深夜，戴上耳機，聽聽這段溫柔的海洋與母語呼吸聲。讓心靈回家：\nhttps://loma-ocean-bar.example.com/?mood=${currentMomentKey}`;
+
+      if (typeof liff !== "undefined" && liff.isLoggedIn() && liff.isApiAvailable("shareTargetPicker")) {
+        liff.shareTargetPicker([{
+          type: "text",
+          text: shareText
+        }])
+        .then(() => {
+          console.log("LINE LIFF 分享成功");
+        })
+        .catch(err => {
+          console.log("LINE LIFF 分享失敗，使用網址分享:", err);
+          const url = "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(shareText);
+          window.open(url, "_blank");
+        });
+      } else {
+        const url = "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(shareText);
+        window.open(url, "_blank");
+      }
+    }
+
+    function submitComment() {
+      const input = document.getElementById("comment-input");
+      if (!input || !input.value.trim()) return;
+
       const text = input.value.trim();
-      if (!text) return;
+      const list = document.getElementById("comments-list");
+      if (!list) return;
 
-      const list = document.getElementById('comments-list');
-      const item = document.createElement('div');
-      item.className = 'comment-item';
+      const userName = localStorage.getItem("loma_username") || "都市旅人";
+      const userInitial = userName.charAt(0);
+
+      const item = document.createElement("div");
+      item.className = "comment-item";
       item.innerHTML = `
         <div class="comment-header">
-          <div class="comment-avatar">我</div>
+          <div class="comment-avatar">${userInitial}</div>
           <div>
-            <div class="comment-name">你</div>
+            <div class="comment-name">${userName}</div>
             <div class="comment-time">剛剛</div>
           </div>
         </div>
@@ -3223,15 +3623,263 @@
         </button>
         <div class="reply-input-area" style="display:none;">
           <div style="display:flex; gap:6px; margin-top:8px;">
-            <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
-            <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
+            <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255, 255, 255, 0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none;">
+            <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;" onclick="submitReply(this)">送出</button>
           </div>
         </div>
       `;
+
       list.insertBefore(item, list.firstChild);
-      input.value = '';
-      lucide.createIcons();
-    };
+      input.value = "";
+
+      if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    }
+
+    function toggleReply(btn) {
+      const replyArea = btn.nextElementSibling;
+      if (replyArea) {
+        if (replyArea.style.display === "none" || replyArea.style.display === "") {
+          replyArea.style.display = "block";
+          const input = replyArea.querySelector("input");
+          if (input) input.focus();
+        } else {
+          replyArea.style.display = "none";
+        }
+      }
+    }
+
+    function submitReply(btn) {
+      const input = btn.previousElementSibling;
+      if (!input || !input.value.trim()) return;
+
+      const text = input.value.trim();
+      const replyArea = btn.closest(".reply-input-area");
+      if (!replyArea) return;
+
+      const userName = localStorage.getItem("loma_username") || "都市旅人";
+      const replyItem = document.createElement("div");
+      replyItem.style = "margin-top: 10px; margin-left: 24px; padding-left: 10px; border-left: 2px solid rgba(212, 165, 116, 0.3);";
+      replyItem.innerHTML = `
+        <div style="font-size: 0.72rem; color: var(--color-amber); font-weight: 600; margin-bottom: 2px;">${userName} <span style="font-size: 0.65rem; color: var(--color-gray-light); font-weight: normal; margin-left: 6px;">剛剛</span></div>
+        <div style="font-size: 0.78rem; color: var(--color-silver-70);">${text}</div>
+      `;
+
+      replyArea.parentNode.insertBefore(replyItem, replyArea);
+      input.value = "";
+      replyArea.style.display = "none";
+    }
+
+    // ==========================================
+    // Loma' 選物彈跳視窗與商品明細控制
+    // ==========================================
+    const SHOP_PRODUCTS = [
+      {
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400",
+        brand: "原青手作工坊",
+        name: "Alofo 編織手作包",
+        tribe: "阿美族創業品牌",
+        desc: "每個包都用阿美族傳統編織手法完成，將傳統圖騰融合現代美學與日常實用性。師承部落老一輩的編織工藝，讓每一條草藤都帶著文化的溫度與記憶。",
+        link: "#"
+      },
+      {
+        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400",
+        brand: "山海氣味所",
+        name: "Sangpi 海岸香氛蠟燭",
+        tribe: "排灣族創業品牌",
+        desc: "以山林、海洋與土地的氣味，陪伴你度過每個深夜時刻。採用天然大豆蠟與純天然精油，模擬山林營火的溫暖柴香，在深夜裡營造放鬆、溫馨的微醺氛圍。",
+        link: "#"
+      },
+      {
+        img: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400",
+        brand: "原森製物",
+        name: "原民圖紋陶杯",
+        tribe: "泰雅族創業品牌",
+        desc: "取材於泰雅族傳統圖紋，在日常中感受文化的溫度。由泰雅族青年陶藝家親手捏製柴燒，保留泥土質樸手感，每一件杯子的釉色在星光下皆是獨一無二的。",
+        link: "#"
+      }
+    ];
+
+    function openShopModal(index) {
+      const p = SHOP_PRODUCTS[index];
+      if (!p) return;
+      document.getElementById('modal-img').src = p.img;
+      document.getElementById('modal-brand').textContent = p.brand;
+      document.getElementById('modal-name').textContent = p.name;
+      document.getElementById('modal-tribe').textContent = p.tribe;
+      document.getElementById('modal-desc').textContent = p.desc;
+      document.getElementById('modal-buy-btn').onclick = () => window.open(p.link, '_blank');
+      const overlay = document.getElementById('shop-modal-overlay');
+      overlay.style.display = 'flex';
+      
+      if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    }
+
+    function closeShopModal() {
+      document.getElementById('shop-modal-overlay').style.display = 'none';
+    }
+
+    function filterShop(btn, filter) {
+      document.querySelectorAll('.shop-filter-btn').forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.05)';
+        b.style.color = 'var(--color-silver-70)';
+        b.style.border = '1px solid var(--color-border-glass)';
+        b.style.fontWeight = '400';
+      });
+      btn.style.background = 'var(--color-amber)';
+      btn.style.color = '#071426';
+      btn.style.border = 'none';
+      btn.style.fontWeight = '600';
+
+      document.querySelectorAll('.shop-big-card').forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    let lomaMap = null;
+    let mapMarkers = [];
+
+    const MAP_PINS = [
+      {
+        name: "凱達格蘭文化館",
+        tag: "文化空間",
+        category: "culture",
+        lat: 25.0403,
+        lng: 121.5136,
+        address: "台北市中正區凱達格蘭大道 3-1 號",
+        time: "週二-週日 09:00-17:00",
+        desc: "臺北市重要的原住民文化交流與工藝推廣展示中心，不定期舉辦特展與手作體驗活動。",
+        link: "https://www.ketagalan.gov.taipei/"
+      },
+      {
+        name: "台北市原住民族行政大樓",
+        tag: "文化空間",
+        category: "culture",
+        lat: 25.0450,
+        lng: 121.5120,
+        address: "台北市中正區博愛路 131 號",
+        time: "週一-週五 08:30-17:30",
+        desc: "都市原住民族的行政、社會福利與多元服務樞紐，不定期舉辦族語認證共學班與創業輔導講座。",
+        link: "https://iad.gov.taipei/"
+      },
+      {
+        name: "凱達格蘭大道原民市集",
+        tag: "原民市集",
+        category: "market",
+        lat: 25.0395,
+        lng: 121.5170,
+        address: "台北市中正區凱達格蘭大道",
+        time: "不定期舉辦，請關注官網公告",
+        desc: "每逢節慶與假日，都市原青在此擺攤展售手作工藝、傳統飲食與文化創作。",
+        link: "#"
+      },
+      {
+        name: "中山原民創業據點",
+        tag: "創業據點",
+        category: "startup",
+        lat: 25.0630,
+        lng: 121.5230,
+        address: "台北市中山區（詳細地址即將公布）",
+        time: "即將開放",
+        desc: "Loma' 合作的都市原民創業展售空間，進駐品牌包含阿美族、排灣族、泰雅族青年品牌。",
+        link: "#"
+      },
+      {
+        name: "北投原民文化空間",
+        tag: "文化空間",
+        category: "culture",
+        lat: 25.1320,
+        lng: 121.4990,
+        address: "台北市北投區（詳細地址即將公布）",
+        time: "即將開放",
+        desc: "結合北投溫泉文化與原住民族生活智慧的複合式文化空間，提供族語學習與手作體驗。",
+        link: "#"
+      }
+    ];
+
+    function initLomaMap() {
+      if (lomaMap) return;
+
+      lomaMap = L.map('leaflet-map', {
+        center: [25.055, 121.535],
+        zoom: 13,
+        zoomControl: false,
+        attributionControl: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      }).addTo(lomaMap);
+
+      MAP_PINS.forEach((pin, index) => {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="star-marker">
+            <div class="star-ring"></div>
+            <div class="star-ring star-ring-2"></div>
+            <div class="star-core"></div>
+          </div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([pin.lat, pin.lng], { icon })
+          .addTo(lomaMap)
+          .on('click', () => showMapPin(index));
+
+        marker.pinData = pin;
+        marker.category = pin.category;
+        mapMarkers.push(marker);
+      });
+    }
+
+    function showMapPin(index) {
+      const pin = MAP_PINS[index];
+      if (!pin) return;
+      document.getElementById('pin-tag').textContent = pin.tag;
+      document.getElementById('pin-name').textContent = pin.name;
+      document.getElementById('pin-address-text').textContent = pin.address;
+      document.getElementById('pin-time-text').textContent = pin.time;
+      document.getElementById('pin-desc').textContent = pin.desc;
+      document.getElementById('pin-link-btn').onclick = () => window.open(pin.link, '_blank');
+      document.getElementById('map-pin-popup').style.display = 'block';
+      if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    }
+
+    function closeMapPin() {
+      document.getElementById('map-pin-popup').style.display = 'none';
+    }
+
+    function filterMap(btn, filter) {
+      document.querySelectorAll('.map-filter-btn').forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.05)';
+        b.style.color = 'var(--color-silver-70)';
+        b.style.border = '1px solid var(--color-border-glass)';
+        b.style.fontWeight = '400';
+      });
+      btn.style.background = 'var(--color-amber)';
+      btn.style.color = '#071426';
+      btn.style.border = 'none';
+      btn.style.fontWeight = '600';
+
+      mapMarkers.forEach(marker => {
+        if (filter === 'all' || marker.category === filter) {
+          marker.addTo(lomaMap);
+        } else {
+          marker.remove();
+        }
+      });
+    }
   </script>
 </body>
+
 </html>
