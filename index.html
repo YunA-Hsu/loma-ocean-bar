@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loma' 海洋喝吧 | 存在於深夜海邊的靈魂聲音空間</title>
+  
+  <!-- 導入 Google Fonts，包含 Outfit (英文) 與 Noto Serif TC (中文繁體，用於詩歌標題) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- 導入 Lucide Icons (圖示庫) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- 導入主要樣式表 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 頂部功能列與背景 -->
+  <canvas id="starsCanvas"></canvas>
+
+  <!-- 全螢幕手機外殼容器，模擬真實 LIFF 或行動網頁呈現 -->
+  <div class="mobile-frame nav-hidden bg-ocean-night">
+    
+    <!-- 持續播放極致星空與海浪氛圍背景層 (高度還原上傳圖片之普魯士藍星海夜空) -->
+    <div class="sky-sea-ambient">
+      <div class="stars-backdrop"></div>
+      <div class="stars-shimmer"></div>
+      <div class="stars-bright"></div>
+      <div class="nebula-dust"></div>
+      <div class="shooting-stars-flow">
+        <div class="shooting-star star-left"></div>
+        <div class="shooting-star star-right"></div>
+      </div>
+      <div class="ocean-water">
+        <div class="moonlight-reflection"></div>
+        <div class="sea-ripples"></div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         WELCOME SCREEN: Loma' 歡迎畫面
+         ========================================================================== -->
+    <!-- ==========================================================================
+         SPLASH SCREEN: Loma' 全螢幕歡迎頁
+         ========================================================================== -->
+    <div class="welcome-screen active" id="splash-screen">
+      <video id="splash-video" autoplay muted loop playsinline class="splash-video-bg"></video>
+      <div class="splash-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1;"></div>
+      <div class="welcome-brand" style="z-index: 2; position: relative; text-align: center; margin-top: auto; margin-bottom: auto; padding: 24px;">
+        <h1 class="welcome-title brand-title-serif" style="color: #ffffff; margin-bottom: 8px;">Loma' 海洋喝吧</h1>
+        <h2 class="welcome-subtitle brand-subtitle-serif" style="font-style: italic; color: var(--color-accent-amber); font-size: 1.4rem; font-weight: 400; letter-spacing: 0.05em; margin-bottom: 4px;">mihamham to pinokay</h2>
+        <p class="welcome-tagline" style="color: #ffffff; font-size: 0.95rem; opacity: 0.9; margin-top: 12px;">歡迎回家</p>
+      </div>
+      <div style="z-index: 2; position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 24px 24px 60px 24px; gap: 20px;">
+        <button class="btn-enter-space" id="btn-enter-splash" style="border: 1px solid var(--color-accent-amber); background: transparent; color: var(--color-accent-amber); box-shadow: none;">
+          <span>進入家裡</span>
+          <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         WELCOME SCREEN: Loma' 歡迎畫面
+         ========================================================================== -->
+    <div class="welcome-screen" id="welcome-screen">
+      <div class="welcome-stars"></div>
+      <div class="welcome-logo-container">
+        <!-- 月亮與星光 -->
+        <div class="welcome-moon"></div>
+        <div class="welcome-brand">
+          <h1 class="welcome-title brand-title-serif">Loma'</h1>
+          <h2 class="welcome-subtitle brand-subtitle-serif">讓族語在城市，有個家</h2>
+          <span class="welcome-divider"></span>
+          <p class="welcome-tagline">一個尋回內心深處浪潮的深夜喝吧</p>
+        </div>
+      </div>
+      <button class="btn-enter-space" id="btn-enter-space">
+        <span>進入空間</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+      <div class="welcome-footer">
+        <p>深夜聲音空間，請戴上耳機觀賞</p>
+      </div>
+    </div>
+
+    <!-- 手機狀態欄 (模擬行動 App 頂部) -->
+    <div class="phone-status-bar">
+      <span class="status-time">23:00</span>
+      <div class="status-icons">
+        <i data-lucide="signal"></i>
+        <i data-lucide="wifi"></i>
+        <i data-lucide="battery"></i>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         SCREEN 1: Loma' 首頁 (三大探索入口)
+         ========================================================================== -->
+    <div class="screen active" id="screen-home">
+      <!-- 頂部功能列 -->
+      <header class="screen-header">
+        <button class="btn-icon" id="btn-home-menu"><i data-lucide="menu"></i></button>
+        <button class="btn-icon" id="btn-home-notification" style="position: relative;">
+          <i data-lucide="bell"></i>
+          <span class="notification-badge" id="home-notification-badge"></span>
+        </button>
+      </header>
+
+      <!-- 重新規劃首頁滾動內容 -->
+      <div class="screen-scroll">
+        
+        <!-- 【區塊 A】品牌標題區 -->
+        <div class="home-brand-block" style="padding: 12px 24px; text-align: center;">
+          <h1 class="brand-title-serif" style="font-family: var(--font-family-serif); font-size: 2.2rem; font-weight: 400; color: #ffffff; margin-bottom: 4px; letter-spacing: 0.05em; text-shadow: 0 0 15px rgba(255,255,255,0.15);">Loma' 海洋喝吧</h1>
+          <p class="brand-quote" style="font-family: var(--font-family-serif); font-size: 0.95rem; color: var(--color-accent-amber); font-weight: 300; letter-spacing: 0.05em; margin-top: 4px;">「讓語言在城市，有個家」</p>
+        </div>
+
+        <!-- 【區塊 B】今日片刻播放器 -->
+        <div class="home-moment-player-block glass-panel" style="margin: 16px 20px; padding: 18px; border-radius: 20px;">
+          <div class="moment-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="moment-label" style="font-size: 0.72rem; color: var(--color-accent-amber); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">今日片刻</span>
+            <span style="font-size: 0.65rem; color: var(--color-text-sand); opacity: 0.6;"><i data-lucide="sparkles" style="width: 10px; height: 10px; display: inline; vertical-align: middle; margin-right: 2px;"></i> 真實記錄</span>
+          </div>
+          <div class="moment-video-container" style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; border: 1px solid rgba(168, 138, 122, 0.25); background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            <video id="today-moment-video" autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7) 100%); pointer-events: none;"></div>
+          </div>
+          <div class="moment-subtitle-box" style="margin: 12px 0 16px 0; min-height: 28px; text-align: center;">
+            <p class="moment-subtitle" id="today-moment-subtitle" style="font-size: 0.8rem; color: var(--color-white); font-weight: 400; line-height: 1.4; letter-spacing: 0.05em; font-family: var(--font-family-sans); text-shadow: 0 1px 2px rgba(0,0,0,0.5);">載入中...</p>
+          </div>
+          <div class="moment-controls-row" style="display: flex; align-items: center; gap: 12px; padding: 0 4px;">
+            <button class="btn-play-pause-moment" id="btn-play-pause-moment" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--color-accent-amber); background: rgba(201, 145, 93, 0.1); color: var(--color-accent-amber); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;">
+              <i data-lucide="pause" id="moment-play-icon" style="width: 14px; height: 14px;"></i>
+            </button>
+            <div class="moment-progress-container" style="flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer;" id="moment-progress-bar">
+              <div class="moment-progress-bar-fill" id="moment-progress-fill" style="width: 0%; height: 100%; background: var(--color-accent-amber); border-radius: 2px; box-shadow: 0 0 8px var(--color-accent-amber);"></div>
+            </div>
+            <span class="moment-timer" id="moment-timer" style="font-family: var(--font-family-sans); font-size: 0.72rem; color: var(--color-text-sand); font-weight: 500; width: 34px; text-align: right;">00:30</span>
+          </div>
+        </div>
+
+        <!-- 【區塊 C】心情選物 -->
+        <div class="home-shop-block" style="margin: 24px 20px;">
+          <h3 class="section-title" style="font-family: var(--font-family-serif); font-size: 1.15rem; font-weight: 500; color: #ffffff; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="shopping-bag" style="width: 18px; height: 18px; color: var(--color-accent-amber);"></i>
+            <span>今日片刻的選物</span>
+          </h3>
+          <div class="shop-grid" style="display: flex; flex-direction: column; gap: 12px;">
+            
+            <div class="shop-item-card glass-panel" onclick="window.navigateTo('screen-shop')" style="padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; gap: 14px; align-items: center;">
+                <div class="shop-card-icon" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(201, 145, 93, 0.1); border: 1px solid rgba(201, 145, 93, 0.2); display: flex; justify-content: center; align-items: center; color: var(--color-accent-amber); flex-shrink: 0;">
+                  <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
+                </div>
+                <div style="flex: 1;">
+                  <h4 class="shop-card-title" style="font-size: 0.88rem; font-weight: 600; color: #ffffff; margin: 0 0 2px 0;">Alofo 編織手作包</h4>
+                  <p class="shop-card-meta" style="font-size: 0.68rem; color: var(--color-text-sand); opacity: 0.8; margin: 0;">原青手作工坊 ｜ 阿美族創業品牌</p>
+                </div>
+                <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: rgba(255,255,255,0.25);"></i>
+              </div>
+            </div>
+
+            <div class="shop-item-card glass-panel" onclick="window.navigateTo('screen-shop')" style="padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; gap: 14px; align-items: center;">
+                <div class="shop-card-icon" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(201, 145, 93, 0.1); border: 1px solid rgba(201, 145, 93, 0.2); display: flex; justify-content: center; align-items: center; color: var(--color-accent-amber); flex-shrink: 0;">
+                  <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                </div>
+                <div style="flex: 1;">
+                  <h4 class="shop-card-title" style="font-size: 0.88rem; font-weight: 600; color: #ffffff; margin: 0 0 2px 0;">Sangpi 海岸香氛蠟燭</h4>
+                  <p class="shop-card-meta" style="font-size: 0.68rem; color: var(--color-text-sand); opacity: 0.8; margin: 0;">山海氣味所 ｜ 排灣族創業品牌</p>
+                </div>
+                <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: rgba(255,255,255,0.25);"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 【區塊 D】城市活動 -->
+        <div class="home-activities-block" style="margin: 24px 20px 40px 20px;">
+          <div class="activities-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 class="section-title" style="font-family: var(--font-family-serif); font-size: 1.15rem; font-weight: 500; color: #ffffff; letter-spacing: 0.05em; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--color-accent-amber);"></i>
+              <span>城市裡的原民活動</span>
+            </h3>
+            <span class="activities-badge" style="font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: rgba(234, 88, 12, 0.15); border: 1px solid rgba(234, 88, 12, 0.3); color: #ff8533; font-weight: 600; letter-spacing: 0.05em;">最新消息</span>
+          </div>
+          <div class="activities-list" style="display: flex; flex-direction: column; gap: 14px;">
+            
+            <div class="activity-card glass-panel" style="padding: 16px; border-radius: 18px; position: relative; overflow: hidden;">
+              <h4 class="activity-name" style="font-size: 0.9rem; font-weight: 600; color: #ffffff; margin: 0 0 8px 0; line-height: 1.4;">第25屆都市原住民文化節</h4>
+              <div class="activity-meta-row" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-size: 0.72rem; color: var(--color-text-sand); display: flex; align-items: center; gap: 6px;"><i data-lucide="map-pin" style="width: 12px; height: 12px; color: var(--color-accent-amber);"></i> 凱達格蘭文化館</span>
+                <span style="font-size: 0.72rem; color: var(--color-text-sand); display: flex; align-items: center; gap: 6px;"><i data-lucide="calendar" style="width: 12px; height: 12px; color: var(--color-accent-amber);"></i> 2026/6/7-8</span>
+              </div>
+              <div style="text-align: right; margin-top: 12px;">
+                <a href="#" class="btn-more-activity" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(201, 145, 93, 0.3); background: rgba(201, 145, 93, 0.05); color: var(--color-accent-amber); font-size: 0.72rem; font-weight: 500; text-decoration: none; transition: all 0.2s ease;">
+                  <span>了解更多</span>
+                  <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="activity-card glass-panel" style="padding: 16px; border-radius: 18px; position: relative; overflow: hidden;">
+              <h4 class="activity-name" style="font-size: 0.9rem; font-weight: 600; color: #ffffff; margin: 0 0 8px 0; line-height: 1.4;">族語認證考試報名中</h4>
+              <div class="activity-meta-row" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-size: 0.72rem; color: var(--color-text-sand); display: flex; align-items: center; gap: 6px;"><i data-lucide="map-pin" style="width: 12px; height: 12px; color: var(--color-accent-amber);"></i> 台北市原住民族行政大樓</span>
+                <span style="font-size: 0.72rem; color: var(--color-text-sand); display: flex; align-items: center; gap: 6px;"><i data-lucide="calendar" style="width: 12px; height: 12px; color: var(--color-accent-amber);"></i> 截止 2026/6/15</span>
+              </div>
+              <div style="text-align: right; margin-top: 12px;">
+                <a href="#" class="btn-more-activity" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(201, 145, 93, 0.3); background: rgba(201, 145, 93, 0.05); color: var(--color-accent-amber); font-size: 0.72rem; font-weight: 500; text-decoration: none; transition: all 0.2s ease;">
+                  <span>了解更多</span>
+                  <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- ==========================================================================
+         SCREEN 1.5: Loma' 生活片刻 (三大探索入口)
+         ========================================================================== -->
+    <div class="screen" id="screen-moments">
+      <!-- 頂部功能列 -->
+      <header class="screen-header">
+        <button class="btn-icon" onclick="window.navigateTo('screen-home')"><i data-lucide="chevron-left"></i></button>
+        <h2 class="header-title">生活片刻</h2>
+        <span style="width: 32px;"></span> <!-- 佔位符 -->
+      </header>
+
+      <!-- 心境探索按鈕區 -->
+      <div class="mood-section" style="margin-top: 16px;">
+        <div class="section-divider">
+          <span class="divider-line left"></span>
+          <h3 class="mood-title">聽當下的心境選歌</h3>
+          <span class="divider-line right"></span>
+        </div>
+
+        <!-- 四大心境網格 -->
+        <div class="mood-grid">
+          
+          <div class="mood-card" data-mood="tired">
+            <div class="mood-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+                <path d="M17 5l2 2m-2 0l2-2" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="mood-name">平靜</span>
+            <span class="mood-desc">深呼吸，閉上眼</span>
+          </div>
+
+          <div class="mood-card" data-mood="homesick">
+            <div class="mood-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 13s1.5 2 4 2 4-2 4-2M9 9c.5.5 1.5.5 2 0M13 9c.5.5 1.5.5 2 0"/>
+              </svg>
+            </div>
+            <span class="mood-name">療癒</span>
+            <span class="mood-desc">聽見深海的古調</span>
+          </div>
+
+          <div class="mood-card" data-mood="lonely">
+            <div class="mood-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 16s1.5-2 4-2 4 2 4 2M9 10h.01M15 10h.01"/>
+              </svg>
+            </div>
+            <span class="mood-name">溫暖</span>
+            <span class="mood-desc">圍坐在火堆旁</span>
+          </div>
+
+          <div class="mood-card" data-mood="lost">
+            <div class="mood-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 15s1.5-1.5 4-1.5 4 1.5 4 1.5M9 10c0-1 1-2 2-1M13 9c1-1 2 0 2 1"/>
+                <path d="M10 7a1 1 0 1 0 2 0 1 1 0 1 0-2 0" />
+              </svg>
+            </div>
+            <span class="mood-name">放鬆</span>
+            <span class="mood-desc">隨著波浪漂流</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         SCREEN 2: Loma' 聲音播放器 (環境播放)
+         ========================================================================== -->
+    <div class="screen" id="screen-player">
+      <!-- 頂部導覽列 -->
+      <header class="screen-header header-player">
+        <button class="btn-icon btn-back-to-home"><i data-lucide="chevron-left"></i></button>
+        <h2 class="header-title">Loma' 聲音片刻</h2>
+        <button class="btn-icon" id="btn-player-menu"><i data-lucide="more-horizontal"></i></button>
+      </header>
+
+      <!-- 背景影音與影像容器 -->
+      <div class="photo-player-container">
+        <!-- 影音與照片背景圖層由 JS 動態載入 -->
+        <video id="player-video" class="player-bg-video" loop playsinline muted></video>
+        <img id="player-photo" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="深夜海洋">
+        <div class="photo-overlay"></div>
+
+        <!-- 頂部引導短語 -->
+        <div class="player-top-phrase" id="player-top-phrase">深夜的海洋，會收容你的疲憊</div>
+
+        <!-- 播放控制按鈕與動畫觸發 -->
+        <div class="play-trigger-container" id="btn-play-toggle">
+          <div class="play-btn-circle">
+            <i data-lucide="play" id="play-icon-main"></i>
+          </div>
+          <div class="play-ripple ripple-1"></div>
+          <div class="play-ripple ripple-2"></div>
+        </div>
+
+        <!-- 歌詞/字幕區 -->
+        <div class="lyric-subtitle-box">
+          <p class="lyric-native" id="player-native-lyric">Alofo, sasengan ni tinalaw a pinaule.</p>
+        </div>
+      </div>
+
+      <!-- 音訊進度條與定時器 -->
+      <div class="audio-control-container">
+        <div class="audio-timer-row">
+          <i data-lucide="headphones" class="icon-headphones"></i>
+          <div class="progress-bar-bg" id="progressBarBg">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+          </div>
+          <span class="audio-time-label" id="audio-time-label">0:00 / 0:30</span>
+        </div>
+      </div>
+
+      <!-- 聲音片刻詳細介紹卡片 -->
+      <div class="story-detail-card glass-panel">
+        <div class="story-scroll-area">
+          <div class="story-layout">
+            <div class="story-text-column">
+              <h3 class="story-title" id="player-story-title">Alofo</h3>
+              <h4 class="story-subtitle" id="player-story-subtitle">情人袋：深夜的避風港</h4>
+              <p class="story-content" id="player-story-content">在阿美族人的傳統裡，情人袋 (Alofo) 不僅是祭典中佩戴，更承載著母親與愛人的叮嚀與祝福。那一縷輕巧的編織，是深夜裡最溫暖的守護與陪伴，在都市的角落裡，尋回平靜的力量。</p>
+            </div>
+            <div class="story-svg-column">
+              <!-- 傳統情人袋的精緻極簡線條畫 -->
+              <svg class="story-line-art" viewBox="0 0 100 120" fill="none" stroke="currentColor">
+                <path d="M20 20 L80 20 L75 90 L25 90 Z" stroke-width="1.5" stroke-dasharray="2,2"/>
+                <path d="M20 20 L10 5 L90 5 L80 20" stroke-width="1.5"/>
+                <path d="M20 20 L50 90 L80 20" stroke-width="1"/>
+                <path d="M10 5 C5 25, 25 95, 50 115 C75 95, 95 25, 90 5" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="50" cy="55" r="8" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 前往選物與收藏按鈕 -->
+          <div class="player-interactive-row">
+            <button class="btn-amber-primary" id="btn-goto-shop">前往選物館 <i data-lucide="arrow-right"></i></button>
+            <button class="btn-icon-bookmark" id="btn-toggle-bookmark"><i data-lucide="heart" id="bookmark-icon"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部快速操作欄 -->
+      <div class="player-quick-actions-bar glass-panel">
+        <button class="action-bar-btn" id="btn-open-card-drawer">
+          <i data-lucide="edit-3"></i>
+          <span>編織小卡</span>
+        </button>
+        <button class="action-bar-btn" id="btn-open-comment-drawer">
+          <i data-lucide="message-square"></i>
+          <span>留言分享</span>
+        </button>
+        <button class="action-bar-btn" id="btn-share-moment">
+          <i data-lucide="share-2"></i>
+          <span>LINE 分享</span>
+        </button>
+      </div>
+
+      <!-- 編織小卡抽屜 -->
+      <div class="action-drawer glass-panel" id="card-generator-drawer">
+        <div class="drawer-handle"></div>
+        <div class="drawer-header">
+          <h3>編織深夜心靈小卡</h3>
+          <button class="btn-close-drawer" id="btn-close-card-drawer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="drawer-body">
+          <!-- 小卡預覽與繪製區域 -->
+          <div class="card-preview-container">
+            <div class="card-preview-box" id="card-preview-box">
+              <div class="card-preview-moon"></div>
+              <div class="card-preview-content">
+                <span class="preview-mood" id="preview-card-mood">療癒</span>
+                <p class="preview-lyrics-native" id="preview-card-lyrics-native">Loma', o paytemek no finawlan to rayray.</p>
+                <div class="preview-divider"></div>
+                <p class="preview-text" id="preview-card-text">在這安靜的夜裡，聽著海浪的呼吸，雖然相隔千山萬水，我們依然與故鄉的土地緊緊相連。</p>
+                <span class="preview-author" id="preview-card-author">都市原青旅人</span>
+              </div>
+            </div>
+          </div>
+          <!-- 輸入與 AI 生成控制區 -->
+          <div class="card-controls">
+            <div class="input-row">
+              <input type="text" id="input-card-text" placeholder="寫下心靈對話或點擊 AI 靈感..." maxlength="80">
+              <button class="btn-ai-sparkle" id="btn-ai-inspiration">
+                <i data-lucide="sparkles"></i> <span>AI 靈感</span>
+              </button>
+            </div>
+            <button class="btn-amber-primary" id="btn-download-card">
+              <i data-lucide="download"></i> 下載小卡圖片
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 匿名留言板抽屜 -->
+      <div class="action-drawer glass-panel" id="comment-drawer">
+        <div class="drawer-handle"></div>
+        <div class="drawer-header">
+          <h3>匿名留言板</h3>
+          <button class="btn-close-drawer" id="btn-close-comment-drawer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="drawer-body">
+          <!-- 留言滾動列表 -->
+          <div class="comments-scroll-list" id="comments-scroll-list">
+            <!-- 留言列表將由 JS 動態載入 -->
+          </div>
+          <!-- 留言輸入區 -->
+          <div class="comment-input-row">
+            <input type="text" id="input-comment-text" placeholder="寫下您的留言..." maxlength="60">
+            <button class="btn-send-comment" id="btn-send-comment">
+              <i data-lucide="send"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         SCREEN 3: Loma' 選物與工藝
+         ========================================================================== -->
+    <div class="screen" id="screen-shop">
+      <!-- 頂部導覽列 -->
+      <header class="screen-header">
+        <button class="btn-icon btn-back-to-player"><i data-lucide="chevron-left"></i></button>
+        <h2 class="header-title">Loma' 選物館</h2>
+        <span style="width: 32px;"></span> <!-- 佔位符，保持頂部導覽列對稱 -->
+      </header>
+
+      <div class="shop-sub-info">支持都會原民青年手作與精選創意</div>
+
+      <!-- 商品列表 -->
+      <div class="product-scroll-container">
+        
+        <!-- 商品 1 -->
+        <div class="product-card glass-panel" data-product-id="alofo-bag">
+          <div class="product-img-box">
+            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=300&q=80" alt="Alofo情人袋">
+          </div>
+          <div class="product-detail">
+            <span class="brand-tag">手工編織工藝</span>
+            <h3 class="product-title">Alofo 手工編織情人袋</h3>
+            <span class="tribe-tag">阿美族工藝</span>
+            <p class="product-rec">佩戴母親的編織，深夜的避風港</p>
+            <p class="product-desc">每個情人袋均由阿美族婦女以傳統編織技法純手工打造，將傳統圖騰融合現代美學，耐用且富含溫度。</p>
+            <button class="btn-go-product">瞭解更多 <i data-lucide="arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- 商品 2 -->
+        <div class="product-card glass-panel" data-product-id="sangpi-candle">
+          <div class="product-img-box">
+            <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=300&q=80" alt="Sangpi蠟燭">
+          </div>
+          <div class="product-detail">
+            <span class="brand-tag">柴火香氛手工</span>
+            <h3 class="product-title">Sangpi 營火香氛蠟燭</h3>
+            <span class="tribe-tag">泰雅族工藝</span>
+            <p class="product-rec">篝火溫暖氣息，木質香調香氛</p>
+            <p class="product-desc">採用天然大豆蠟與純天然精油，模擬山林營火的溫暖柴香，在深夜裡為您營造放鬆、溫馨的微醺氛圍。</p>
+            <button class="btn-go-product">瞭解更多 <i data-lucide="arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- 商品 3 -->
+        <div class="product-card glass-panel" data-product-id="ceramic-cup">
+          <div class="product-img-box">
+            <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=300&q=80" alt="都會黑陶杯">
+          </div>
+          <div class="product-detail">
+            <span class="brand-tag">手製黑陶燒陶工藝</span>
+            <h3 class="product-title">都會黑燒陶製茶杯</h3>
+            <span class="tribe-tag">排灣族工藝</span>
+            <span class="tribe-tag">排灣族工藝</span>
+            <p class="product-desc">由排灣族青年陶藝家親手捏製柴燒，保留泥土質樸手感，每一件杯子的釉色在星光下皆是獨一無二的。</p>
+            <p class="product-desc">由排灣族青年陶藝家親手捏製柴燒，保留泥土質樸手感，每一件杯子的釉色在星光下皆是獨一無二的。</p>
+            <button class="btn-go-product">瞭解更多 <i data-lucide="arrow-right"></i></button>
+        </div>
+
+      </div>
+
+      <!-- 底部返回與前往地圖控制列 -->
+      <!-- 底部返回與前往地圖 -->
+        <p class="shop-footer-quote">每一次的支持都是對都市原民青年文化傳承的溫暖守護。</p>        <!-- 地圖節點詳情抽屜 (Action Drawer Map v2.0 有溫度探險版) -->
+        <p class="shop-footer-quote">每一次的支持都是對都市原民青年文化傳承的溫暖守護。</p>
+        <!-- 地圖節點詳情抽屜 (Action Drawer Map v2.0 有溫度探險版) -->
+          <div class="drawer-header">
+            <h3>原民文化節點詳情</h3>
+            <button class="btn-close-drawer" id="btn-close-map-drawer"><i data-lucide="x"></i></button>
+          </div>
+          <div class="drawer-body" style="display: flex; flex-direction: column; overflow: hidden; padding-bottom: 24px;">
+            <!-- 標題與標籤 -->
+            <!-- 標題與標籤 -->
+              <i data-lucide="star" class="drawer-map-star" style="width: 16px; height: 16px; color: var(--color-accent-amber); fill: var(--color-accent-amber);"></i>
+              <h4 class="drawer-map-name" id="drawer-map-name" style="font-family: var(--font-family-serif); font-size: 1.15rem; font-weight: 600; color: #ffffff; letter-spacing: 0.05em; margin: 0;">凱達格蘭文化館</h4>
+              <h4 class="drawer-map-name" id="drawer-map-name" style="font-family: var(--font-family-serif); font-size: 1.15rem; font-weight: 600; color: #ffffff; letter-spacing: 0.05em; margin: 0;">凱達格蘭文化館</h4>
+            <span class="drawer-map-tag" id="drawer-map-tag" style="display: inline-block; align-self: flex-start; margin-bottom: 12px; font-size: 0.72rem; padding: 2px 8px; background: rgba(212,165,116,0.15); border-radius: 4px; color: var(--color-accent-amber); font-weight: 500; flex-shrink: 0;">文化空間</span>
+            <span class="drawer-map-tag" id="drawer-map-tag" style="display: inline-block; align-self: flex-start; margin-bottom: 12px; font-size: 0.72rem; padding: 2px 8px; background: rgba(212,165,116,0.15); border-radius: 4px; color: var(--color-accent-amber); font-weight: 500; flex-shrink: 0;">文化空間</span>
+            <!-- 基礎資訊 -->
+            <!-- 基礎資訊 -->
+              <div class="drawer-map-meta-item" style="display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="map-pin" style="width: 14px; height: 14px; color: var(--color-accent-amber); flex-shrink: 0;"></i>
+                <span id="drawer-map-address"></span>
+              </div>
+              <div class="drawer-map-meta-item" style="display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="phone" style="width: 14px; height: 14px; color: var(--color-accent-amber); flex-shrink: 0;"></i>
+                <span id="drawer-map-phone"></span>
+              </div>
+              <div class="drawer-map-meta-item" style="display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="clock" style="width: 14px; height: 14px; color: var(--color-accent-amber); flex-shrink: 0;"></i>
+                <span id="drawer-map-hours"></span>
+              </div>
+            </div>
+
+            <!-- 有溫度圖文詳情 (垂直滾動區) -->
+            <!-- 有溫度圖文詳情 (垂直滾動區) -->
+              
+              <!-- 【你會在這裡找到什麼？】 -->
+            <!-- 【你會在這裡找到什麼？】 -->
+                <h5 style="font-size: 0.82rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                  <i data-lucide="compass" style="width: 14px; height: 14px; color: var(--color-accent-amber);"></i>
+                  <span>你會在這裡找到什麼？</span>
+                <span>你會在這裡找到什麼？</span>
+                <p id="drawer-map-find" style="font-size: 0.75rem; line-height: 1.5; color: var(--color-silver-70); margin: 0; white-space: pre-line;"></p>
+              </div>
+
+              <!-- 【最佳造訪時間】 -->
+            <!-- 【最佳造訪時間】 -->
+                <h5 style="font-size: 0.82rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                  <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--color-accent-amber);"></i>
+                  <span>最佳造訪時間</span>
+                <span>最佳造訪時間</span>
+                <p id="drawer-map-who" style="font-size: 0.75rem; line-height: 1.5; color: var(--color-silver-70); margin: 0; white-space: pre-line;"></p>
+              </div>
+
+              <!-- 【創辦人/主持人故事】 -->
+            <!-- 【創辦人/主持人故事】 -->
+                <h5 style="font-size: 0.82rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                  <i data-lucide="user-check" style="width: 14px; height: 14px; color: var(--color-accent-amber);"></i>
+                  <span>創辦人 / 主持人故事</span>
+                <span>創辦人 / 主持人故事</span>
+                <p id="drawer-map-founder" style="font-size: 0.75rem; line-height: 1.5; color: var(--color-silver-70); margin: 0; white-space: pre-line;"></p>
+              </div>
+
+              <!-- 【推薦配套行程】 -->
+            <!-- 【推薦配套行程】 -->
+                <h5 style="font-size: 0.82rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                  <i data-lucide="footprints" style="width: 14px; height: 14px; color: var(--color-accent-amber);"></i>
+                  <span>推薦配套行程</span>
+                <span>推薦配套行程</span>
+                <p id="drawer-map-tour" style="font-size: 0.75rem; line-height: 1.5; color: var(--color-silver-70); margin: 0; white-space: pre-line;"></p>
+              </div>
+
+            </div>
+
+            <!-- 前往官方網站與導入地圖控制 -->
+            <div style="display: flex; gap: 10px; margin-top: auto; flex-shrink: 0;">
+              <button class="btn-amber-primary" id="btn-map-action" style="margin-top: 0; flex: 1.5;">
+              <span>前往官方網站</span>
+                <i data-lucide="arrow-right"></i>
+              </button>
+              <button class="btn-glass-secondary" id="btn-map-bookmark" style="flex: 1; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; gap: 6px; border-radius: 99px;">
+                <i data-lucide="bookmark" style="width: 14px; height: 14px; color: var(--color-accent-amber);"></i>
+                <span>想去清單</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部地圖篩選按鈕 (Pills - 支援手機水平滑動的溫暖人味需求分類) -->
+      <div class="map-filters-row" style="overflow-x: auto; white-space: nowrap; justify-content: flex-start; gap: 10px; padding: 0 16px; scrollbar-width: none;">
+        <button class="filter-pill active" data-filter="all" style="flex: 0 0 auto; min-width: 60px; height: 36px; padding: 0 14px; border-radius: 18px;">全部</button>
+        <button class="filter-pill" data-filter="space" style="flex: 0 0 auto; min-width: 100px; height: 36px; padding: 0 14px; border-radius: 18px;">尋找族語溫度</button>
+        <button class="filter-pill" data-filter="food" style="flex: 0 0 auto; min-width: 100px; height: 36px; padding: 0 14px; border-radius: 18px;">品嚐身分的味道</button>
+        <button class="filter-pill" data-filter="craft" style="flex: 0 0 auto; min-width: 100px; height: 36px; padding: 0 14px; border-radius: 18px;">用雙手重新認識</button>
+        <button class="filter-pill" data-filter="creator" style="flex: 0 0 auto; min-width: 90px; height: 36px; padding: 0 14px; border-radius: 18px;">遇見創作者</button>
+        <button class="filter-pill" data-filter="market" style="flex: 0 0 auto; min-width: 100px; height: 36px; padding: 0 14px; border-radius: 18px;">跟著族人過節</button>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         SCREEN 4: Loma' 地圖 (都會原民文化探索地圖)
+         ========================================================================== -->
+    <div class="screen" id="screen-map">
+      <!-- 頂部導覽列 -->
+      <header class="screen-header">
+        <button class="btn-icon btn-back-to-shop"><i data-lucide="chevron-left"></i></button>
+        <h2 class="header-title">都會原生地圖</h2>
+        <button class="btn-icon" id="btn-map-menu"><i data-lucide="menu"></i></button>
+      </header>
+
+      <!-- 地圖互動區域 -->
+      <div class="map-interactive-container">
+        
+        <!-- 台北市地圖 SVG 節點與 JS 動態渲染 -->
+        <svg id="svgTaipeiMap" viewBox="0 0 360 480">
+          <!-- 地圖背景線條與節點標記 (JS動態繪製，包含動畫與微小的呼吸發光電波點) -->
+        </svg>
+
+        <!-- 地圖節點詳情抽屜 (Action Drawer Map) -->
+        <div class="action-drawer glass-panel" id="map-detail-drawer">
+          <div class="drawer-handle"></div>
+          <div class="drawer-header">
+            <h3>原民文化節點詳情</h3>
+            <button class="btn-close-drawer" id="btn-close-map-drawer"><i data-lucide="x"></i></button>
+          </div>
+          <div class="drawer-body">
+            <div class="drawer-map-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <i data-lucide="star" class="drawer-map-star" style="width: 16px; height: 16px; color: var(--color-accent-amber); fill: var(--color-accent-amber);"></i>
+              <h4 class="drawer-map-name" id="drawer-map-name" style="font-family: var(--font-family-serif); font-size: 1.15rem; font-weight: 600; color: #ffffff; letter-spacing: 0.05em; margin: 0;">凱達格蘭文化館</h4>
+            </div>
+            <span class="drawer-map-tag" id="drawer-map-tag">文化空間</span>
+            <p class="drawer-map-desc" id="drawer-map-desc">北市重要的原住民主題文化館，展示豐富的文化器物與當代藝術創作。</p>
+            
+            <div class="drawer-map-meta-box">
+              <div class="drawer-map-meta-item">
+                <i data-lucide="clock"></i>
+                <span id="drawer-map-hours">週二 ~ 週日 09:00 - 17:00 (週一休館)</span>
+              </div>
+            </div>
+            <button class="btn-amber-primary" id="btn-map-action" style="margin-top: auto;">
+              <span>前往官方網站</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部地圖篩選按鈕 (Pills) -->
+      <div class="map-filters-row">
+        <button class="filter-pill active" data-filter="all">全部</button>
+        <button class="filter-pill" data-filter="space">文化空間</button>
+        <button class="filter-pill" data-filter="hub">創業據點</button>
+        <button class="filter-pill" data-filter="market">原民市集</button>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         SCREEN 5: 我的 (個人中心與收藏夾)
+         ========================================================================== -->
+    <div class="screen" id="screen-profile">
+      <!-- 頂部導覽列 -->
+      <header class="screen-header">
+        <span style="width: 32px;"></span> <!-- 佔位符 -->
+        <h2 class="header-title">個人空間</h2>
+        <span style="width: 32px;"></span>
+      </header>
+
+      <!-- 個人資料卡 -->
+      <div class="profile-card glass-panel">
+        <div class="profile-avatar">
+          <i data-lucide="user"></i>
+        </div>
+        <div class="profile-info-inputs">
+          <div class="profile-input-group">
+            <label for="profile-name">姓名</label>
+            <input type="text" id="profile-name" placeholder="輸入您的姓名...">
+          </div>
+          <div class="profile-input-group">
+            <label for="profile-tribe">族別</label>
+            <input type="text" id="profile-tribe" placeholder="輸入您的所屬族別...">
+          </div>
+        </div>
+      </div>
+
+      <!-- 收藏夾標題 -->
+      <div class="profile-section-title">
+        <i data-lucide="heart" class="title-icon"></i>
+        <h3>我收藏的聲音片刻</h3>
+      </div>
+
+      <!-- 收藏夾內容 -->
+      <div class="bookmarks-scroll-container">
+        <div class="empty-bookmarks" id="empty-bookmarks">
+          <i data-lucide="music"></i>
+          <p>尚未收藏任何片刻，快去探索吧！</p>
+        </div>
+        <div class="bookmarks-grid" id="bookmarks-grid" style="display: none;">
+          <!-- 收藏的聲音卡片將由 JS 動態載入 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 關於 Loma' 與背景環境音效選單抽屜 -->
+    <div class="action-drawer glass-panel" id="about-loma-drawer">
+      <div class="drawer-handle"></div>
+      <div class="drawer-header">
+        <h3>關於 Loma' 海洋喝吧</h3>
+        <button class="btn-close-drawer" id="btn-close-about-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="drawer-body">
+        <div class="about-loma-content">
+          <h4 class="brand-subtitle-serif" style="font-size: 1.2rem; color: var(--color-amber); margin-bottom: 8px; font-family: var(--font-family-serif);">「讓族語在城市，有個家。」</h4>
+          <p style="font-size: 0.78rem; line-height: 1.6; color: var(--color-silver-70); margin-bottom: 16px; font-family: var(--font-family-sans);">
+            Loma' 是阿美族語：家。海洋喝吧是一個專為都市漂流的族人所建置的深夜聲音避風港。在這裡，聽著大自然的潮汐，伴隨古調的吟唱與溫慢的故事，讓文化靈魂在都市繁華中得以安放。
+          </p>
+        </div>
+        
+        <div class="divider-line" style="margin: 8px 0 16px 0;"></div>
+        
+        <h4 style="font-size: 0.88rem; font-weight: 600; color: #ffffff; margin-bottom: 12px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="sliders" style="width: 16px; height: 16px; color: var(--color-amber);"></i>
+          <span>深夜背景環境音效混音</span>
+        </h4>
+        
+        <div class="ambient-mix-container" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- 聲音 1 -->
+          <div class="ambient-control-card glass-panel" style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.02); border-color: rgba(212,165,116,0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i data-lucide="waves" style="width: 18px; height: 18px; color: var(--color-amber);"></i>
+                <span style="font-size: 0.8rem; font-weight: 500; color: #ffffff;">海浪低語 (Ocean Waves)</span>
+              </div>
+              <button class="ambient-toggle-btn" id="toggle-ambient-waves" data-ambient="waves">關閉</button>
+            </div>
+            <div class="ambient-volume-slider-row" style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+              <i data-lucide="volume-1" style="width: 12px; height: 12px; color: var(--color-gray-light);"></i>
+              <input type="range" class="ambient-volume-slider" id="slider-ambient-waves" min="0" max="1" step="0.1" value="0.3" style="flex: 1; accent-color: var(--color-amber); height: 3px;">
+              <i data-lucide="volume-2" style="width: 12px; height: 12px; color: var(--color-gray-light);"></i>
+            </div>
+          </div>
+          
+          <!-- 聲音 2 -->
+          <div class="ambient-control-card glass-panel" style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.02); border-color: rgba(212,165,116,0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i data-lucide="flame" style="width: 18px; height: 18px; color: var(--color-amber);"></i>
+                <span style="font-size: 0.8rem; font-weight: 500; color: #ffffff;">營火劈啪 (Campfire Crackle)</span>
+              </div>
+              <button class="ambient-toggle-btn" id="toggle-ambient-campfire" data-ambient="campfire">關閉</button>
+            </div>
+            <div class="ambient-volume-slider-row" style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+              <i data-lucide="volume-1" style="width: 12px; height: 12px; color: var(--color-gray-light);"></i>
+              <input type="range" class="ambient-volume-slider" id="slider-ambient-campfire" min="0" max="1" step="0.1" value="0.3" style="flex: 1; accent-color: var(--color-amber); height: 3px;">
+              <i data-lucide="volume-2" style="width: 12px; height: 12px; color: var(--color-gray-light);"></i>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 16px; text-align: center; font-size: 0.7rem; color: var(--color-gray-light); letter-spacing: 0.05em;">
+          Loma' 海洋喝吧 v1.0 • 深夜聲音避風港
+        </div>
+      </div>
+    </div>
+
+    <!-- 深夜溫馨通知抽屜 -->
+    <div class="action-drawer glass-panel" id="notification-drawer">
+      <div class="drawer-handle"></div>
+      <div class="drawer-header">
+        <h3>深夜溫馨消息通知</h3>
+        <button class="btn-close-drawer" id="btn-close-notification-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="drawer-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.72rem; color: var(--color-gray-light);">您收到一條新消息</span>
+          <button class="btn-text" id="btn-read-all-notifications" style="font-size: 0.72rem; padding: 2px 0;">標記全部為已讀</button>
+        </div>
+        
+        <!-- 通知列表 -->
+        <div class="notification-list" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1;">
+          <!-- 消息 1 -->
+          <div class="notification-item unread glass-panel" style="padding: 12px 14px; background: rgba(255,255,255,0.02); display: flex; gap: 12px; border-left: 3px solid var(--color-amber);">
+            <div class="notif-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(212,165,116,0.15); color: var(--color-amber); display: flex; justify-content: center; align-items: center; flex-shrink: 0; font-size: 0.78rem; font-weight: bold;">S</div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; font-weight: 600; color: #ffffff;">吧檯手 Sra 叔叔</span>
+                <span style="font-size: 0.65rem; color: var(--color-gray-light);">10分鐘前</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--color-silver-70); margin: 0; line-height: 1.4;">「Nga'ayho! 今晚的海風特別溫柔，很適合喝上一杯溫水，聽聽情人袋 (Alofo) 的故事喔。」</p>
+            </div>
+          </div>
+          
+          <!-- 消息 2 -->
+          <div class="notification-item unread glass-panel" style="padding: 12px 14px; background: rgba(255,255,255,0.02); display: flex; gap: 12px; border-left: 3px solid var(--color-amber);">
+            <div class="notif-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(212,165,116,0.15); color: var(--color-amber); display: flex; justify-content: center; align-items: center; flex-shrink: 0;"><i data-lucide="message-square" style="width: 14px; height: 14px;"></i></div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; font-weight: 600; color: #ffffff;">留言板消息</span>
+                <span style="font-size: 0.65rem; color: var(--color-gray-light);">1小時前</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--color-silver-70); margin: 0; line-height: 1.4;">您收到來自「阿美飛魚」的新留言祝福！快去留言板看看大家溫馨的互動吧！</p>
+            </div>
+          </div>
+          
+          <!-- 消息 3 -->
+          <div class="notification-item glass-panel" style="padding: 12px 14px; background: rgba(255,255,255,0.02); display: flex; gap: 12px; opacity: 0.7;">
+            <div class="notif-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); color: var(--color-silver); display: flex; justify-content: center; align-items: center; flex-shrink: 0;"><i data-lucide="shopping-bag" style="width: 14px; height: 14px;"></i></div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; font-weight: 600; color: #ffffff;">原青工藝選物消息</span>
+                <span style="font-size: 0.65rem; color: var(--color-gray-light);">2小時前</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--color-silver-70); margin: 0; line-height: 1.4;">新進排灣族「手製黑陶燒陶茶杯」已有少量現貨，由青年陶藝家親手捏製，歡迎前往支持！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 播放器詳細設定與歌詞控制抽屜 -->
+    <div class="action-drawer glass-panel" id="player-options-drawer">
+      <div class="drawer-handle"></div>
+      <div class="drawer-header">
+        <h3>聲音片刻詳細設定</h3>
+        <button class="btn-close-drawer" id="btn-close-player-options-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="drawer-body" style="gap: 20px;">
+        <!-- 歌詞開啟 -->
+        <div class="glass-panel" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border-color: rgba(212,165,116,0.15);">
+          <div>
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #ffffff; margin: 0;">原民歌詞字幕</h4>
+            <span style="font-size: 0.68rem; color: var(--color-gray-light);">在播放畫面上顯示或隱藏母語字幕</span>
+          </div>
+          <button class="ambient-toggle-btn" id="toggle-lyrics" style="padding: 6px 16px; font-size: 0.75rem;">隱藏</button>
+        </div>
+        
+        <!-- 歌詞字幕字級與切換 -->
+        <div class="glass-panel" style="padding: 16px; display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); border-color: rgba(212,165,116,0.15);">
+          <div>
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #ffffff; margin: 0;">古調主音量</h4>
+            <span style="font-size: 0.68rem; color: var(--color-gray-light);">調整原住民族古調歌曲的播放音量</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+            <i data-lucide="volume-x" style="width: 14px; height: 14px; color: var(--color-gray-light);"></i>
+            <input type="range" id="slider-main-volume" min="0" max="1" step="0.05" value="0.8" style="flex: 1; accent-color: var(--color-amber); height: 3px;">
+            <i data-lucide="volume-2" style="width: 14px; height: 14px; color: var(--color-gray-light);"></i>
+          </div>
+        </div>
+        
+        <!-- 聲音與製作名單 (Credits) -->
+        <div class="glass-panel" style="padding: 16px; background: rgba(255,255,255,0.02); border-color: rgba(212,165,116,0.15); display: flex; flex-direction: column; gap: 10px;">
+          <h4 style="font-size: 0.85rem; font-weight: 600; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="info" style="width: 14px; height: 14px; color: var(--color-amber);"></i>
+            <span>音樂與故事採集</span>
+          </h4>
+          <div style="font-size: 0.72rem; color: var(--color-silver-70); line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
+            <div><strong>古調採集與吟唱</strong>：部落長輩與青年音樂人</div>
+            <div><strong>採集地點</strong>：東海岸部落聚會所與深夜海洋現場</div>
+            <div><strong>翻譯與整理</strong>：都會原青文化研究社</div>
+            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); font-style: italic; color: var(--color-amber);">
+              「聽見大海的呼喚，讓古老智慧流傳於城市的深夜。」
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         PERSISTENT BOTTOM NAV BAR (底部導覽列)
+         ========================================================================== -->
+    <nav class="bottom-nav-bar glass-panel" id="bottom-nav-bar">
+      <button class="nav-item active" data-tab="screen-home">
+        <i data-lucide="home"></i>
+        <span>首頁</span>
+      </button>
+      <button class="nav-item" data-tab="screen-moments">
+        <i data-lucide="waves"></i>
+        <span>生活片刻</span>
+      </button>
+      <button class="nav-item" data-tab="screen-shop">
+        <i data-lucide="shopping-bag"></i>
+        <span>Loma' 選物</span>
+      </button>
+      <button class="nav-item" data-tab="screen-map">
+        <i data-lucide="map-pin"></i>
+        <span>原生地圖</span>
+      </button>
+      <button class="nav-item" data-tab="screen-profile">
+        <i data-lucide="user"></i>
+        <span>個人</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- 載入 Howler.js (音訊播放庫) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  
+  <!-- 載入 LINE LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <!-- 引入主要交互邏輯 -->
+  <script src="app.js"></script>
+</body>
+</html>
