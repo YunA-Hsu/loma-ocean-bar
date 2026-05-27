@@ -371,6 +371,24 @@
       object-fit: cover;
       z-index: 0;
     }
+    .today-video-placeholder {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #030e22 0%, #071c35 50%, #030e22 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 0;
+    }
+    .wave-ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(212,165,116,0.2);
+      animation: rippleAnim 4s infinite ease-out;
+    }
+    .wave-ripple.r1 { width:60px; height:60px; animation-delay:0s; }
+    .wave-ripple.r2 { width:110px; height:110px; animation-delay:1.2s; }
+    .wave-ripple.r3 { width:160px; height:160px; animation-delay:2.4s; }
     .today-player-overlay {
       position: absolute;
       top: 0;
@@ -1407,106 +1425,98 @@
     <div class="screen" id="screen-home">
       <header class="screen-header">
         <button class="btn-icon" id="btn-menu-trigger"><i data-lucide="menu"></i></button>
-        <h2 class="header-title-center">首頁</h2>
+        <div style="text-align:center; line-height:1.3;">
+          <div style="font-family:var(--font-family-serif); font-size:1.1rem; font-weight:700; color:#ffffff; letter-spacing:0.05em;">Loma' 海洋喝吧</div>
+          <div style="font-size:0.68rem; color:var(--color-amber); letter-spacing:0.08em;">讓語言在城市，有個家</div>
+        </div>
         <button class="btn-icon" id="btn-bell-trigger">
           <i data-lucide="bell"></i>
           <span class="notification-dot" id="notif-badge"></span>
         </button>
       </header>
 
-      <!-- 品牌標題區 -->
-      <div class="brand-title-area">
-        <h1>Loma' 海洋喝吧</h1>
-        <h2>「讓語言在城市，有個家」</h2>
-      </div>
-
       <!-- 今日片刻播放器 -->
-      <div class="today-moment-player">
-        <video id="today-video" autoplay muted loop playsinline class="today-video-bg"></video>
-        <div class="today-player-overlay"></div>
-        <span class="today-tag">今日片刻</span>
-        
-        <div class="today-subtitle-box">
-          <h3 class="today-subtitle-ami">Mihamis kamo haw?</h3>
-          <p class="today-subtitle-zh">你今天喝了嗎？</p>
-        </div>
-
-        <div class="today-control-bar">
-          <button class="btn-play-mini" id="btn-today-play-toggle">
-            <i data-lucide="play" id="today-play-icon"></i>
+      <div class="today-moment-player" style="position:relative; border-radius:20px; overflow:hidden; width:100%; padding-top:56.25%; margin-bottom:16px;">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;">
+        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%); z-index:1;"></div>
+        <div style="position:absolute; top:12px; right:12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); color:var(--color-amber); font-size:0.65rem; padding:3px 8px; border-radius:6px; z-index:3; font-weight:600;">今日片刻</div>
+        <div style="position:absolute; top:12px; left:14px; z-index:3; font-size:0.78rem; color:rgba(255,255,255,0.85);">深夜的海洋，會收容你的疲憊</div>
+        <div style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center; z-index:3;">
+          <button id="btn-play-today" onclick="toggleTodayPlay()" style="width:52px; height:52px; border-radius:50%; background:rgba(212,165,116,0.85); border:none; cursor:pointer; display:flex; justify-content:center; align-items:center;">
+            <i id="today-play-icon" data-lucide="play" style="width:22px; height:22px; color:#071426;"></i>
           </button>
-          <div class="progress-bar-container" id="today-progress-container">
-            <div class="progress-bar-fill" id="today-progress-fill"></div>
+        </div>
+        <div style="position:absolute; bottom:44px; left:0; right:0; text-align:center; z-index:3; padding:0 16px;">
+          <div style="font-family:var(--font-family-serif); font-size:0.95rem; color:var(--color-amber); font-style:italic;">Mihamis kamo haw?</div>
+        </div>
+        <div style="position:absolute; bottom:0; left:0; right:0; z-index:3; padding:8px 16px 12px; display:flex; align-items:center; gap:10px;">
+          <i data-lucide="headphones" style="width:15px; height:15px; color:rgba(168,184,200,0.7);"></i>
+          <div id="today-progress-container" style="flex:1; height:3px; background:rgba(255,255,255,0.2); border-radius:2px; cursor:pointer;">
+            <div id="today-progress-fill" style="height:100%; width:0%; background:var(--color-amber); border-radius:2px; transition:width 0.1s linear;"></div>
           </div>
-          <span class="countdown-timer" id="today-timer">30s</span>
+          <span id="today-timer" style="font-size:0.7rem; color:rgba(168,184,200,0.7); min-width:24px;">30s</span>
         </div>
       </div>
+
+      <button onclick="window.navigateTo('screen-moments')" style="width:100%; margin-top:12px; padding:11px; background:rgba(212,165,116,0.08); border:1px solid rgba(212,165,116,0.3); border-radius:12px; color:var(--color-amber); font-size:0.82rem; font-weight:500; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px;">
+        <i data-lucide="heart" style="width:14px;height:14px;"></i>
+        選擇你的心情，找到今晚的片刻 →
+      </button>
 
       <!-- 今日片刻選物 -->
-      <h3 class="section-title">
-        <i data-lucide="sparkles"></i> 今日片刻的選物
-      </h3>
-      <div class="horizontal-scroll-container">
-        <!-- 卡片 1 -->
-        <div class="horizontal-card" onclick="window.navigateTo('screen-shop')">
-          <div>
-            <span class="card-meta">原青手作工坊</span>
-            <h4 class="card-heading">Alofo 編織手作包</h4>
+      <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+
+        <div style="display:flex; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.2); border-radius:16px; overflow:hidden; cursor:pointer;" onclick="window.navigateTo('screen-shop')">
+          <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400" style="width:130px; height:130px; object-fit:cover; flex-shrink:0;">
+          <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:4px;">原青手作工坊</div>
+              <div style="font-size:0.95rem; font-weight:600; color:#ffffff; margin-bottom:2px;">Alofo 編織手作包</div>
+              <div style="font-size:0.72rem; color:var(--color-silver-70);">阿美族創業品牌</div>
+              <div style="font-size:0.72rem; color:var(--color-silver-70); margin-top:6px; line-height:1.4;">每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性。</div>
+            </div>
+            <div style="text-align:right; margin-top:8px;">
+              <span style="font-size:0.78rem; color:var(--color-amber); font-weight:600;">前往選品 →</span>
+            </div>
           </div>
-          <p class="card-subtext">阿美族創業品牌。由部落長輩一針一線編織的情人袋，盛裝家的想念。</p>
         </div>
-        <!-- 卡片 2 -->
-        <div class="horizontal-card" onclick="window.navigateTo('screen-shop')">
-          <div>
-            <span class="card-meta">山海氣味所</span>
-            <h4 class="card-heading">Sangpi 海岸香氛蠟燭</h4>
-          </div>
-          <p class="card-subtext">排灣族創業品牌。以潮汐與山林為靈感，為都會深夜點燃溫暖篝火氣味。</p>
-        </div>
+
       </div>
 
       <!-- 城市原民活動 -->
       <h3 class="section-title">
-        <i data-lucide="map-pin"></i> 城市裡的原民活動
+        <i data-lucide="radio"></i>
+        城市消息
       </h3>
       <div class="vertical-cards-list">
-        <!-- 活動 1 -->
         <div class="event-card">
           <div class="event-header">
-            <h4 class="event-title">第25屆都市原住民文化節</h4>
+            <p class="event-title">第25屆都市原住民族文化節</p>
           </div>
           <div class="event-details">
             <div class="event-detail-item">
-              <i data-lucide="map-pin"></i>
-              <span>凱達格蘭文化館</span>
+              <i data-lucide="map-pin"></i> 凱達格蘭文化館
             </div>
             <div class="event-detail-item">
-              <i data-lucide="calendar"></i>
-              <span>2026/6/7-8</span>
+              <i data-lucide="calendar"></i> 2026/6/7–8
             </div>
           </div>
-          <button class="btn-text-action" onclick="window.location.href='#'">
-            了解更多 <i data-lucide="arrow-right"></i>
-          </button>
+          <button class="btn-text-action">了解更多 <i data-lucide="arrow-right"></i></button>
         </div>
-        <!-- 活動 2 -->
+
         <div class="event-card">
           <div class="event-header">
-            <h4 class="event-title">族語認證考試報名中</h4>
+            <p class="event-title">族語認證考試報名中</p>
           </div>
           <div class="event-details">
             <div class="event-detail-item">
-              <i data-lucide="map-pin"></i>
-              <span>台北市原住民族行政大樓</span>
+              <i data-lucide="map-pin"></i> 台北市原住民族行政大樓
             </div>
             <div class="event-detail-item">
-              <i data-lucide="calendar"></i>
-              <span>截止至 2026/6/15</span>
+              <i data-lucide="clock"></i> 報名截止 2026/6/15
             </div>
           </div>
-          <button class="btn-text-action" onclick="window.location.href='#'">
-            了解更多 <i data-lucide="arrow-right"></i>
-          </button>
+          <button class="btn-text-action">了解更多 <i data-lucide="arrow-right"></i></button>
         </div>
       </div>
     </div>
@@ -1795,23 +1805,23 @@
          底部持久導覽列 (Common Nav Bar)
          ========================================== -->
     <nav class="bottom-nav-bar hidden" id="app-nav-bar">
-      <button class="nav-item active" data-target="screen-home">
+      <button class="nav-item active" onclick="window.navigateTo('screen-home')">
         <i data-lucide="home"></i>
         <span>首頁</span>
       </button>
-      <button class="nav-item" data-target="screen-moments">
-        <i data-lucide="waves"></i>
-        <span>片刻</span>
+      <button class="nav-item" onclick="window.navigateTo('screen-moments')">
+        <i data-lucide="heart"></i>
+        <span>心情片刻</span>
       </button>
-      <button class="nav-item" data-target="screen-shop">
+      <button class="nav-item" onclick="window.navigateTo('screen-shop')">
         <i data-lucide="shopping-bag"></i>
-        <span>選品</span>
+        <span>Loma'選品</span>
       </button>
-      <button class="nav-item" data-target="screen-map">
+      <button class="nav-item" onclick="window.navigateTo('screen-map')">
         <i data-lucide="map-pin"></i>
-        <span>地圖</span>
+        <span>城市地圖</span>
       </button>
-      <button class="nav-item" data-target="screen-profile">
+      <button class="nav-item" onclick="window.navigateTo('screen-profile')">
         <i data-lucide="user"></i>
         <span>我的</span>
       </button>
@@ -2019,6 +2029,11 @@
 
       // 初始化今日片刻與文化片刻音訊播放器控制
       initAudioPlayers();
+
+      // 渲染 Lucide 圖示
+      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
     });
 
     // 更新狀態列時間
@@ -2227,7 +2242,8 @@
       // 更新底部導航高亮
       const navItems = document.querySelectorAll(".nav-item");
       navItems.forEach(item => {
-        if (item.getAttribute("data-target") === screenId) {
+        const clickAttr = item.getAttribute("onclick") || "";
+        if (clickAttr.includes(screenId)) {
           item.classList.add("active");
         } else {
           item.classList.remove("active");
@@ -2238,16 +2254,12 @@
       if (screenId === "screen-profile") {
         renderBookmarks();
       }
-    };
 
-    // 底部導航欄按鈕綁定
-    const navItems = document.querySelectorAll(".nav-item");
-    navItems.forEach(item => {
-      item.addEventListener("click", () => {
-        const target = item.getAttribute("data-target");
-        window.navigateTo(target);
-      });
-    });
+      // 重新渲染 Lucide 圖示，確保切換頁面後新動態產生的 icon 正常顯示
+      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    };
 
     // ==========================================
     // 6. 個人資料卡 LocalStorage 持久化保存
@@ -2347,11 +2359,13 @@
     function initAudioPlayers() {
       // 1. 初始化今日片刻視訊背景
       const todayVideo = document.getElementById("today-video");
-      if (TODAY_VIDEO_SRC) {
-        todayVideo.src = TODAY_VIDEO_SRC;
-        todayVideo.load();
-      } else {
-        todayVideo.style.display = "none";
+      if (todayVideo) {
+        if (TODAY_VIDEO_SRC) {
+          todayVideo.src = TODAY_VIDEO_SRC;
+          todayVideo.load();
+        } else {
+          todayVideo.style.display = "none";
+        }
       }
 
       // 今日片刻音訊 - Sra 叔叔歡迎語調 (預設使用 Song 1)
@@ -2373,8 +2387,8 @@
         }
       });
 
-      // 綁定今日片刻播放按鈕
-      document.getElementById("btn-today-play-toggle").addEventListener("click", () => {
+      // 綁定今日片刻播放按鈕 (全域可用，搭配 inline onclick="toggleTodayPlay()")
+      window.toggleTodayPlay = function() {
         if (howlTodayPlayer.playing()) {
           howlTodayPlayer.pause();
         } else {
@@ -2382,7 +2396,7 @@
           if (howlMomentPlayer && howlMomentPlayer.playing()) howlMomentPlayer.pause();
           howlTodayPlayer.play();
         }
-      });
+      };
 
       // 綁定今日片刻進度條尋道 (Seek)
       const todayBar = document.getElementById("today-progress-container");
