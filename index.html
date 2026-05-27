@@ -2032,8 +2032,11 @@
       <div style="display:flex; flex-direction:column; gap:16px; flex:1; overflow-y:auto; padding-bottom:16px;">
 
         <!-- 商品卡 1 -->
-        <div class="shop-big-card" onclick="openShopModal(0)" data-category="fashion" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
-          <div style="display:flex; gap:0;">
+        <div class="shop-big-card" data-product-id="0" style="position:relative; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden;">
+          <button onclick="toggleShopFavorite(0, this)" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.4); border:none; width:32px; height:32px; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; z-index:10;">
+            <i data-lucide="heart" style="width:15px;height:15px;color:#fff;"></i>
+          </button>
+          <div onclick="openShopModal(0)" style="display:flex; gap:0; cursor:pointer;">
             <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
             <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
               <div>
@@ -2051,8 +2054,11 @@
         </div>
 
         <!-- 商品卡 2 -->
-        <div class="shop-big-card" onclick="openShopModal(1)" data-category="life" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
-          <div style="display:flex; gap:0;">
+        <div class="shop-big-card" data-product-id="1" style="position:relative; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden;">
+          <button onclick="toggleShopFavorite(1, this)" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.4); border:none; width:32px; height:32px; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; z-index:10;">
+            <i data-lucide="heart" style="width:15px;height:15px;color:#fff;"></i>
+          </button>
+          <div onclick="openShopModal(1)" style="display:flex; gap:0; cursor:pointer;">
             <img src="https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
             <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
               <div>
@@ -2070,8 +2076,11 @@
         </div>
 
         <!-- 商品卡 3 -->
-        <div class="shop-big-card" onclick="openShopModal(2)" data-category="craft" style="background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden; cursor:pointer;">
-          <div style="display:flex; gap:0;">
+        <div class="shop-big-card" data-product-id="2" style="position:relative; background:rgba(7,20,38,0.6); border:1px solid rgba(212,165,116,0.15); border-radius:16px; overflow:hidden;">
+          <button onclick="toggleShopFavorite(2, this)" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.4); border:none; width:32px; height:32px; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; z-index:10;">
+            <i data-lucide="heart" style="width:15px;height:15px;color:#fff;"></i>
+          </button>
+          <div onclick="openShopModal(2)" style="display:flex; gap:0; cursor:pointer;">
             <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400" style="width:140px; height:200px; object-fit:cover; flex-shrink:0;">
             <div style="padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; min-height:200px;">
               <div>
@@ -2216,6 +2225,19 @@
         </div>
       </div>
 
+      <!-- 我收藏的選品 -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.88rem; font-weight:600; color:#fff; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          <i data-lucide="shopping-bag" style="width:16px;height:16px;color:var(--color-amber);"></i>
+          我收藏的選品
+        </div>
+        <div id="shop-favs-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <div id="shop-favs-empty" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:24px 0; color:var(--color-gray-light); font-size:0.78rem;">
+          <i data-lucide="shopping-bag" style="width:28px;height:28px;"></i>
+          尚未收藏任何選品
+        </div>
+      </div>
+
       <!-- 關於 Loma' -->
       <div class="about-brand-box">
         <h4 class="about-brand-title">關於 Loma' 海洋喝吧</h4>
@@ -2224,6 +2246,14 @@
           Loma' 在海岸阿美語意指「喝／滋養」。每天30秒，讓都市族人在繁忙喧囂的城市中，能聽見海潮起伏與母語的溫暖呼吸聲，感覺被理解與看見。<br><br>
           <span style="font-size: 0.68rem; color: var(--color-amber);">阿美族海洋文化微服務 &times; 臺北市原住民族事業體扶植計畫</span>
         </p>
+        <!-- 版本資訊列 -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:12px; border-top:1px solid var(--color-border-glass);">
+          <div style="font-size:0.7rem; color:var(--color-gray-light);">版本 v0.1.0-beta</div>
+          <button onclick="openChangeLog()" style="background:rgba(212,165,116,0.08); border:1px solid rgba(212,165,116,0.2); border-radius:99px; padding:4px 12px; color:var(--color-amber); font-size:0.68rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
+            <i data-lucide="clock" style="width:11px;height:11px;"></i>
+            更新紀錄
+          </button>
+        </div>
       </div>
     </div>
 
@@ -2508,6 +2538,54 @@
       </div>
     </div>
 
+    <!-- 版本更新紀錄抽屜 -->
+    <div id="changelog-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.6); z-index:300;" onclick="closeChangeLog()"></div>
+    <div id="changelog-drawer" style="position:absolute; bottom:-100%; left:0; right:0; background:rgba(7,20,38,0.98); border-top:1px solid rgba(212,165,116,0.2); border-radius:24px 24px 0 0; padding:24px; z-index:301; transition:bottom 0.4s cubic-bezier(0.32,0.72,0,1); max-height:75%; overflow-y:auto;">
+      
+      <div style="width:36px; height:4px; background:rgba(255,255,255,0.15); border-radius:99px; margin:0 auto 20px;"></div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="font-family:var(--font-family-serif); font-size:1rem; color:#fff; margin:0;">更新紀錄</h3>
+        <button onclick="closeChangeLog()" style="background:rgba(255,255,255,0.05); border:none; width:30px; height:30px; border-radius:50%; color:rgba(255,255,255,0.6); cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+      </div>
+
+      <!-- v0.1.0 -->
+      <div style="margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <span style="background:var(--color-amber); color:#071426; font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:99px;">v0.1.0-beta</span>
+          <span style="font-size:0.68rem; color:var(--color-gray-light);">2026.05.28</span>
+          <span style="font-size:0.65rem; color:var(--color-amber); border:1px solid rgba(212,165,116,0.3); padding:1px 6px; border-radius:99px;">最新</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; padding-left:8px; border-left:2px solid rgba(212,165,116,0.2);">
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">🌊 首次發布 Loma' 海洋喝吧</div>
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">🎵 心情片刻：晚安、下雨、想家、肚子餓</div>
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">🛍 故事選品：Alofo 編織手作包、Sangpi 蠟燭、原民陶杯</div>
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">🗺 城市地圖：台北原民據點互動地圖</div>
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">💬 族人留言板（測試版）</div>
+          <div style="font-size:0.75rem; color:var(--color-silver-70);">❤️ 收藏片刻功能</div>
+        </div>
+      </div>
+
+      <!-- 即將推出 -->
+      <div style="margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <span style="background:rgba(255,255,255,0.05); color:var(--color-silver-70); font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:99px; border:1px solid var(--color-border-glass);">即將推出</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; padding-left:8px; border-left:2px solid rgba(255,255,255,0.08);">
+          <div style="font-size:0.75rem; color:rgba(168,184,200,0.4);">🎬 影片版文化片刻</div>
+          <div style="font-size:0.75rem; color:rgba(168,184,200,0.4);">🗓 節日節選內容上線</div>
+          <div style="font-size:0.75rem; color:rgba(168,184,200,0.4);">🔔 LINE 推播通知</div>
+          <div style="font-size:0.75rem; color:rgba(168,184,200,0.4);">📍 更多城市據點加入</div>
+          <div style="font-size:0.75rem; color:rgba(168,184,200,0.4);">🎴 心情小卡下載功能</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; font-size:0.68rem; color:var(--color-gray-light); margin-top:8px;">
+        阿美族海洋文化 micro 服務 &times; 臺北市原住民族事業體扶植計畫
+      </div>
+
+    </div>
+
   </div>
 
   <script>
@@ -2635,6 +2713,11 @@
 
       // 初始化今日片刻與文化片刻音訊播放器控制
       initAudioPlayers();
+
+      // 初始化選品收藏狀態
+      if (typeof initShopFavorites === 'function') {
+        initShopFavorites();
+      }
 
       // 渲染 Lucide 圖示
       if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
@@ -2856,9 +2939,11 @@
         }
       });
 
-      // 當切換到個人頁面時，動態渲染收藏夾列表
-      if (screenId === "screen-profile") {
-        renderBookmarks();
+      // 當切換到個人頁面時，動態渲染收藏夾與選品列表
+      if (screenId === 'screen-profile') {
+        if (typeof renderBookmarks === 'function') renderBookmarks();
+        if (typeof renderShopFavs === 'function') renderShopFavs();
+        if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') lucide.createIcons();
       }
 
       // 重新渲染 Lucide 圖示，確保切換頁面後新動態產生的 icon 正常顯示
@@ -3370,6 +3455,40 @@
       }
     }
 
+    function renderShopFavs() {
+      const favs = JSON.parse(localStorage.getItem('loma_shop_favs') || '[]');
+      const list = document.getElementById('shop-favs-list');
+      const empty = document.getElementById('shop-favs-empty');
+      if (!list || !empty) return;
+
+      if (favs.length === 0) {
+        list.style.display = 'none';
+        empty.style.display = 'flex';
+        return;
+      }
+
+      list.style.display = 'flex';
+      empty.style.display = 'none';
+      list.innerHTML = '';
+
+      favs.forEach(index => {
+        const p = SHOP_PRODUCTS[index];
+        if (!p) return;
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex; gap:10px; background:rgba(7,20,38,0.5); border:1px solid var(--color-border-glass); border-radius:12px; overflow:hidden; cursor:pointer;';
+        item.onclick = () => window.navigateTo('screen-shop');
+        item.innerHTML = `
+          <img src="${p.img}" style="width:64px; height:64px; object-fit:cover; flex-shrink:0;">
+          <div style="padding:10px; flex:1;">
+            <div style="font-size:0.65rem; color:var(--color-amber); margin-bottom:2px;">${p.brand}</div>
+            <div style="font-size:0.85rem; font-weight:600; color:#fff;">${p.name}</div>
+            <div style="font-size:0.68rem; color:var(--color-silver-70);">${p.tribe}</div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
     // ==========================================
     // Loma' 文化時刻 播放器附加控制功能 (心情小卡、收藏、LINE分享、族人留言)
     // ==========================================
@@ -3743,6 +3862,40 @@
       });
     }
 
+    function toggleShopFavorite(index, btn) {
+      let favs = JSON.parse(localStorage.getItem('loma_shop_favs') || '[]');
+      const icon = btn.querySelector('i');
+      
+      if (favs.includes(index)) {
+        favs = favs.filter(x => x !== index);
+        icon.style.fill = 'none';
+        icon.style.color = '#fff';
+        btn.style.background = 'rgba(0,0,0,0.4)';
+      } else {
+        favs.push(index);
+        icon.style.fill = 'var(--color-amber)';
+        icon.style.color = 'var(--color-amber)';
+        btn.style.background = 'rgba(212,165,116,0.2)';
+      }
+      localStorage.setItem('loma_shop_favs', JSON.stringify(favs));
+    }
+
+    function initShopFavorites() {
+      const favs = JSON.parse(localStorage.getItem('loma_shop_favs') || '[]');
+      favs.forEach(index => {
+        const card = document.querySelector(`.shop-big-card[data-product-id="${index}"]`);
+        if (card) {
+          const btn = card.querySelector('button');
+          const icon = btn?.querySelector('i');
+          if (icon) {
+            icon.style.fill = 'var(--color-amber)';
+            icon.style.color = 'var(--color-amber)';
+            btn.style.background = 'rgba(212,165,116,0.2)';
+          }
+        }
+      });
+    }
+
     let lomaMap = null;
     let mapMarkers = [];
 
@@ -3878,6 +4031,19 @@
           marker.remove();
         }
       });
+    }
+
+    function openChangeLog() {
+      document.getElementById('changelog-overlay').style.display = 'block';
+      document.getElementById('changelog-drawer').style.bottom = '0';
+      if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    }
+
+    function closeChangeLog() {
+      document.getElementById('changelog-overlay').style.display = 'none';
+      document.getElementById('changelog-drawer').style.bottom = '-100%';
     }
   </script>
 </body>
