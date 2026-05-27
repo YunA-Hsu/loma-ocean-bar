@@ -2324,7 +2324,7 @@
     // ==========================================
     // 1. 全域多媒體資源與數據庫定義
     // ==========================================
-    const SPLASH_VIDEO_SRC = "splash.mp4"; // 用於歡迎畫面 z-index:0 背景影片
+    const SPLASH_VIDEO_SRC = ""; // 用於歡迎畫面 z-index:0 背景影片
     const TODAY_VIDEO_SRC = "";  // 用於首頁今日片刻 16:9 影片區
 
     // 心情文化片刻資料
@@ -2550,31 +2550,23 @@
     // 4. 歡迎頁轉場與影音加載
     // ==========================================
     function initSplashMedia() {
-      const video = document.getElementById("splash-video");
-      if (video && SPLASH_VIDEO_SRC) {
-        video.src = SPLASH_VIDEO_SRC;
-        video.load();
-        video.play().catch(e => console.log('autoplay blocked:', e));
-      } else if (video) {
-        // 沒有影片時以靜態 Canvas 普魯士藍星河背景為底
-        video.style.display = "none";
-      }
-
+      // 進入按鈕
       const btnEnter = document.getElementById("btn-enter");
       const splash = document.getElementById("splash-screen");
       const navBar = document.getElementById("app-nav-bar");
 
-      btnEnter.addEventListener("click", () => {
-        // 歡迎音效觸發 (空靈和弦)
-        playWarmWelcomeChime();
+      if (!btnEnter) {
+        console.error("找不到 btn-enter！");
+        return;
+      }
 
-        // 歡迎頁淡出
-        splash.classList.add("fade-out");
+      btnEnter.addEventListener("click", () => {
+        splash.style.opacity = "0";
+        splash.style.transition = "opacity 0.6s ease";
         setTimeout(() => {
           splash.style.display = "none";
-          // 導向首頁並開啟底部導航列
+          if (navBar) navBar.classList.remove("hidden");
           window.navigateTo("screen-home");
-          navBar.classList.remove("hidden");
         }, 600);
       });
     }
@@ -2624,38 +2616,31 @@
     // ==========================================
     window.navigateTo = function(screenId) {
       // 關閉所有抽屜
-      closeAllDrawers();
+      if (typeof closeAllDrawers === 'function') closeAllDrawers();
 
-      // 隱藏所有畫面的 active 狀態
-      const screens = document.querySelectorAll(".screen");
-      screens.forEach(s => s.classList.remove("active"));
-
-      // 顯示目標畫面
-      const targetScreen = document.getElementById(screenId);
-      if (targetScreen) {
-        targetScreen.classList.add("active");
-      }
-
-      // 更新底部導航高亮
-      const navItems = document.querySelectorAll(".nav-item");
-      navItems.forEach(item => {
-        const clickAttr = item.getAttribute("onclick") || "";
-        if (clickAttr.includes(screenId)) {
-          item.classList.add("active");
-        } else {
-          item.classList.remove("active");
-        }
+      document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.removeProperty('display');
       });
 
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const activeNav = document.querySelector(`.nav-item[onclick*="${screenId}"]`);
+      if (activeNav) activeNav.classList.add('active');
+
       // 當切換到個人頁面時，動態渲染收藏夾列表
-      if (screenId === "screen-profile") {
+      if (screenId === "screen-profile" && typeof renderBookmarks === 'function') {
         renderBookmarks();
       }
 
-      // 重新渲染 Lucide 圖示，確保切換頁面後新動態產生的 icon 正常顯示
-      if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-        lucide.createIcons();
-      }
+      lucide.createIcons();
     };
 
     // ==========================================
