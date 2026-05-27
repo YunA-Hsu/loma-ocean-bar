@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loma' 海洋喝吧 — 每天一口，海洋的味道</title>
+<meta name="description" content="Loma' 在阿美語意指「喝」。每天30秒，讓都市族人感受來自海洋的文化補給。" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Noto+Sans+TC:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ocean-deep:   #071a2e;
+    --ocean-mid:    #0d3254;
+    --ocean-teal:   #0a5c6e;
+    --ocean-light:  #12899e;
+    --foam:         #c8e8ed;
+    --sand:         #d4b896;
+    --amber:        #e8a84c;
+    --moon:         #f5f0e8;
+    --text-main:    #e8f4f7;
+    --text-muted:   #8db8c4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ocean-deep);
+    color: var(--text-main);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── WAVE BACKGROUND ── */
+  .wave-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 80%, rgba(10,92,110,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(13,50,84,0.5) 0%, transparent 60%),
+      linear-gradient(180deg, #071a2e 0%, #0a2540 40%, #071e35 100%);
+    pointer-events: none;
+  }
+
+  .wave-svg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.12;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── HEADER / HERO ── */
+  header {
+    position: relative;
+    z-index: 2;
+    padding: 3.5rem 2rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--foam);
+  }
+
+  .logo span {
+    color: var(--amber);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--foam); }
+
+  /* ── HERO ── */
+  .hero {
+    padding-bottom: 6rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ocean-light);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    background: var(--ocean-light);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--moon);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 3vw, 1.7rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-desc {
+    max-width: 500px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 2;
+    margin-bottom: 3rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: none;
+    border: 1px solid var(--ocean-light);
+    color: var(--foam);
+    padding: 0.9rem 2rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  .hero-cta:hover {
+    background: var(--ocean-teal);
+    border-color: var(--ocean-teal);
+    transform: translateY(-2px);
+  }
+
+  .hero-cta svg {
+    transition: transform 0.3s;
+  }
+
+  .hero-cta:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* ── DIVIDER ── */
+  .wave-divider {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ocean-teal), transparent);
+    margin: 0;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1s ease 0.8s forwards;
+  }
+
+  /* ── MOMENT PLAYER ── */
+  .section-moment {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ocean-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .moment-card {
+    border: 1px solid rgba(18,137,158,0.25);
+    padding: 2.5rem;
+    background: rgba(13,50,84,0.3);
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .moment-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--ocean-light), transparent);
+  }
+
+  .moment-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 300;
+    color: rgba(18,137,158,0.15);
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .moment-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--ocean-teal);
+    color: var(--ocean-light);
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .moment-amis {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--amber);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .moment-zh {
+    font-size: 1.1rem;
+    color: var(--foam);
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+  }
+
+  .moment-story {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 2;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(18,137,158,0.15);
+  }
+
+  /* Player controls */
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(18,137,158,0.15);
+  }
+
+  .play-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--ocean-light);
+    background: none;
+    color: var(--foam);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .play-btn:hover {
+    background: var(--ocean-teal);
+    border-color: var(--ocean-teal);
+    transform: scale(1.05);
+  }
+
+  .play-btn.playing {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ocean-deep);
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 2px;
+    background: rgba(18,137,158,0.2);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ocean-light), var(--amber));
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .progress-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--amber);
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    transition: right 0.1s linear;
+  }
+
+  .time-display {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    width: 3rem;
+    text-align: right;
+  }
+
+  /* ── FEATURES ── */
+  .section-features {
+    position: relative;
+    z-index: 2;
+    padding: 0 2rem 5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(18,137,158,0.15);
+    border: 1px solid rgba(18,137,158,0.15);
+  }
+
+  .feature {
+    padding: 2rem 1.5rem;
+    background: rgba(7,26,46,0.8);
+    transition: background 0.3s;
+  }
+
+  .feature:hover {
+    background: rgba(13,50,84,0.5);
+  }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--foam);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.9;
+  }
+
+  /* ── LINE CTA ── */
+  .section-line {
+    position: relative;
+    z-index: 2;
+    padding: 0 2rem 6rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+  }
+
+  .line-box {
+    border: 1px solid rgba(18,137,158,0.3);
+    padding: 3.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .line-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(10,92,110,0.2), transparent);
+    pointer-events: none;
+  }
+
+  .line-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ocean-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .line-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300;
+    color: var(--moon);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .line-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .line-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #06C755;
+    color: #fff;
+    padding: 0.9rem 2.2rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .line-btn:hover {
+    background: #05a847;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(6,199,85,0.3);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(18,137,158,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: rgba(141,184,196,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes waveFloat {
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(-3%); }
+  }
+
+  .wave-svg path {
+    animation: waveFloat 8s ease-in-out infinite;
+  }
+
+  .wave-svg path:nth-child(2) {
+    animation-delay: -2s;
+    animation-duration: 10s;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    header { padding: 2rem 1.2rem 0; }
+    .container, .section-moment, .section-features, .section-line, footer {
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+    }
+    .nav-links { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .moment-card { padding: 1.8rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wave-bg"></div>
+
+<!-- Animated wave at bottom -->
+<svg class="wave-svg" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,100 C240,160 480,40 720,100 C960,160 1200,40 1440,100 L1440,200 L0,200 Z" fill="#0a5c6e"/>
+  <path d="M0,130 C360,70 720,170 1080,110 C1260,80 1380,140 1440,120 L1440,200 L0,200 Z" fill="#0d3254" opacity="0.7"/>
+</svg>
+
+<!-- HEADER -->
+<header>
+  <nav class="nav">
+    <div class="logo">Loma<span>'</span> 海洋喝吧</div>
+    <ul class="nav-links">
+      <li><a href="#moment">今日片刻</a></li>
+      <li><a href="#about">關於我們</a></li>
+      <li><a href="#join">加入好友</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero" id="about">
+    <div class="hero-eyebrow">阿美族海洋文化微服務</div>
+    <h1>Loma<em>'</em></h1>
+    <div class="hero-sub">每天一口，海洋的味道</div>
+    <p class="hero-desc">
+      Loma' 在海岸阿美語意指「喝」，引申為滋養與補給。<br>
+      每天 30 秒，讓散居都市的族人，在忙碌日常裡，<br>
+      仍能感受到來自海洋與族群的文化溫度。
+    </p>
+    <a href="#join" class="hero-cta">
+      加入 LINE 好友
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</header>
+
+<div class="wave-divider"></div>
+
+<!-- TODAY'S MOMENT -->
+<section class="section-moment" id="moment">
+  <div class="section-label">今日海洋片刻 · No.001</div>
+
+  <div class="moment-card">
+    <div class="moment-number">001</div>
+    <div class="moment-tag">海岸阿美語 × 海浪音</div>
+    <div class="moment-amis">Mihamis kamo haw?</div>
+    <div class="moment-zh">你今天喝了嗎？</div>
+
+    <p class="moment-story">
+      部落長輩見面的問候不是「你好嗎」，而是「你喝了嗎？」——
+      飲食即關懷，滋養即問候。Loma' 海洋喝吧，每天給你一口文化補給，
+      讓你知道：無論身在何處，你都沒有被遺忘。
+    </p>
+
+    <!-- Audio Player UI (decorative for demo, can wire up real audio) -->
+    <div class="player">
+      <button class="play-btn" id="playBtn" aria-label="播放" onclick="togglePlay()">
+        <svg id="playIcon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M6 4l11 6-11 6V4z"/>
+        </svg>
+        <svg id="pauseIcon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+          <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/>
+        </svg>
+      </button>
+      <div class="progress-track" onclick="seekAudio(event)" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+        <div class="progress-dot" id="progressDot" style="right:0%"></div>
+      </div>
+      <div class="time-display" id="timeDisplay">0:30</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section-features">
+  <div class="section-label">為什麼是 Loma'？</div>
+
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">🌊</div>
+      <div class="feature-title">30秒海洋片刻</div>
+      <p class="feature-desc">海岸阿美語語音 × 真實海浪環境音，每天一則，30秒完成，零負擔融入日常。</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🗣️</div>
+      <div class="feature-title">真人族語錄音</div>
+      <p class="feature-desc">由海岸阿美語認證教師親聲錄製，確保語言的溫度與文化詮釋的正確性。</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🛒</div>
+      <div class="feature-title">都原品牌導流</div>
+      <p class="feature-desc">以文化信任為基礎，自然連接都市原民青年創業品牌，讓購買成為文化認同的行動。</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINE CTA -->
+<section class="section-line" id="join">
+  <div class="line-box">
+    <div class="line-eyebrow">加入我們</div>
+    <h2 class="line-title">讓每天多一口<br>來自海洋的味道</h2>
+    <p class="line-desc">
+      追蹤 Loma' LINE 官方帳號，<br>
+      每天收到30秒族語文化片刻。
+    </p>
+    <a href="https://line.me" class="line-btn" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+      </svg>
+      加入 LINE 好友
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Loma' 海洋喝吧</div>
+  <div class="footer-copy">© 2026 Loma'. 海岸阿美族文化計畫 · 臺北市原住民族事業體扶植計畫</div>
+</footer>
+
+<script>
+  // Simple audio player simulation (wire up real audio file path when ready)
+  let isPlaying = false;
+  let duration = 30;
+  let current = 0;
+  let timer = null;
+
+  function togglePlay() {
+    const btn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+
+    if (isPlaying) {
+      isPlaying = false;
+      clearInterval(timer);
+      btn.classList.remove('playing');
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+    } else {
+      if (current >= duration) { current = 0; }
+      isPlaying = true;
+      btn.classList.add('playing');
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+      timer = setInterval(tick, 100);
+    }
+  }
+
+  function tick() {
+    current += 0.1;
+    if (current >= duration) {
+      current = duration;
+      clearInterval(timer);
+      isPlaying = false;
+      document.getElementById('playBtn').classList.remove('playing');
+      document.getElementById('playIcon').style.display = 'block';
+      document.getElementById('pauseIcon').style.display = 'none';
+    }
+    updateUI();
+  }
+
+  function updateUI() {
+    const pct = (current / duration) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    const rem = Math.max(0, duration - current);
+    const s = Math.floor(rem);
+    document.getElementById('timeDisplay').textContent = `0:${s.toString().padStart(2,'0')}`;
+  }
+
+  function seekAudio(e) {
+    const track = document.getElementById('progressTrack');
+    const rect = track.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    current = pct * duration;
+    updateUI();
+  }
+</script>
+</body>
+</html>
