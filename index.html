@@ -2551,10 +2551,11 @@
     // ==========================================
     function initSplashMedia() {
       const video = document.getElementById("splash-video");
-      if (SPLASH_VIDEO_SRC) {
+      if (video && SPLASH_VIDEO_SRC) {
         video.src = SPLASH_VIDEO_SRC;
         video.load();
-      } else {
+        video.play().catch(e => console.log('autoplay blocked:', e));
+      } else if (video) {
         // 沒有影片時以靜態 Canvas 普魯士藍星河背景為底
         video.style.display = "none";
       }
