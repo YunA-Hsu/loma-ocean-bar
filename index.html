@@ -148,7 +148,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity var(--transition-smooth);
-      padding: 50px 20px calc(var(--nav-height) + 16px) 20px;
+      padding: 0 20px calc(var(--nav-height) + 16px) 20px;
       box-sizing: border-box;
       overflow-y: auto;
       z-index: 2;
@@ -269,9 +269,6 @@
     #screen-home {
       padding: 0;
       overflow: hidden;
-    }
-    #screen-home .screen-header {
-      padding-top: 50px;
     }
     .btn-icon {
       background: rgba(255, 255, 255, 0.04);
@@ -1375,25 +1372,130 @@
     .btn-action-primary:hover {
       opacity: 0.9;
     }
+
+    /* 文化主題卡片 */
+    .moment-topic-card {
+      background: rgba(7,20,38,0.55);
+      border: 1px solid var(--color-border-glass);
+      border-radius: 16px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+    .moment-topic-card:hover {
+      border-color: var(--color-amber);
+      background: rgba(212,165,116,0.08);
+      transform: translateY(-2px);
+    }
+    .moment-topic-card.coming-soon {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+    .moment-topic-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--color-amber);
+    }
+    .moment-topic-icon svg { width:20px; height:20px; }
+    .moment-topic-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .moment-topic-sub {
+      font-size: 0.68rem;
+      color: var(--color-silver-70);
+      font-style: italic;
+    }
+
+    /* 播放頁波紋動畫 */
+    .player-ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(212,165,116,0.25);
+      animation: playerRipple 3s infinite ease-out;
+    }
+    .player-ripple.r1 { width:100px; height:100px; animation-delay:0s; }
+    .player-ripple.r2 { width:150px; height:150px; animation-delay:1s; }
+    .player-ripple.r3 { width:200px; height:200px; animation-delay:2s; }
+    @keyframes playerRipple {
+      0% { transform:scale(0.8); opacity:0.6; }
+      100% { transform:scale(1.2); opacity:0; }
+    }
+
+    /* 留言區樣式 */
+    .comment-item {
+      background: rgba(7,20,38,0.5);
+      border: 1px solid var(--color-border-glass);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .comment-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(212,165,116,0.15);
+      border: 1px solid rgba(212,165,116,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--color-amber);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .comment-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .comment-time {
+      font-size: 0.65rem;
+      color: var(--color-gray-light);
+    }
+    .comment-text {
+      font-size: 0.82rem;
+      color: var(--color-silver-70);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .comment-reply-btn {
+      background: none;
+      border: none;
+      color: var(--color-amber);
+      font-size: 0.72rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0;
+      opacity: 0.7;
+    }
+    .comment-reply-btn:hover { opacity: 1; }
   </style>
 </head>
 <body>
 
-  <!-- 桌機背景氛圍 -->
-  <div class="desktop-bg-ambient"></div>
-
   <!-- 手機外殼容器 -->
   <div class="mobile-frame">
     
-    <!-- 頂部手機模擬狀態列 -->
-    <div class="phone-status-bar">
-      <span id="status-time">21:20</span>
-      <div class="status-icons">
-        <i data-lucide="signal"></i>
-        <i data-lucide="wifi"></i>
-        <i data-lucide="battery"></i>
-      </div>
-    </div>
 
     <!-- 背景動態星空畫布 -->
     <canvas id="starsCanvas"></canvas>
@@ -1526,65 +1628,83 @@
          【畫面 2】文化片刻 id="screen-moments"
          ========================================== -->
     <div class="screen" id="screen-moments">
-      <header class="screen-header">
-        <button class="btn-icon" onclick="window.navigateTo('screen-home')"><i data-lucide="chevron-left"></i></button>
-        <h2 class="header-title-center">文化片刻</h2>
-        <span style="width:40px;"></span>
-      </header>
-
-      <!-- 心情選擇 (2x2 網格) -->
-      <div class="mood-grid-2x2">
-        <div class="mood-grid-item active" data-mood="night">
-          <div class="mood-icon-wrapper"><i data-lucide="moon"></i></div>
-          <span class="mood-name">晚安</span>
-        </div>
-        <div class="mood-grid-item" data-mood="rain">
-          <div class="mood-icon-wrapper"><i data-lucide="cloud-rain"></i></div>
-          <span class="mood-name">下雨</span>
-        </div>
-        <div class="mood-grid-item" data-mood="homesick">
-          <div class="mood-icon-wrapper"><i data-lucide="home"></i></div>
-          <span class="mood-name">想家</span>
-        </div>
-        <div class="mood-grid-item" data-mood="hungry">
-          <div class="mood-icon-wrapper"><i data-lucide="utensils"></i></div>
-          <span class="mood-name">肚子餓</span>
-        </div>
+      <!-- 固定 header -->
+      <div class="screen-header" style="position:sticky; top:0; z-index:50; background:rgba(1,3,8,0.85); backdrop-filter:blur(12px); margin:0 -20px; padding:12px 20px; flex-shrink:0;">
+        <div style="width:40px;"></div>
+        <h2 class="header-title-center">心情片刻</h2>
+        <div style="width:40px;"></div>
       </div>
 
-      <!-- 片刻播放器區 -->
-      <div class="glass-panel moment-player-panel">
-        <div class="moment-placeholder-visual">
-          <div class="moment-wave-ripple"></div>
-          <div class="moment-wave-ripple"></div>
-          <div class="moment-visual-icon">
-            <i data-lucide="waves" id="moment-visual-waves"></i>
+      <!-- 可捲動內容 -->
+      <div style="overflow-y:auto; flex:1; padding:0 20px 16px;">
+
+        <!-- 主題一：心情 -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="heart" style="width:14px;height:14px;"></i> 心情
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="moment-topic-card" onclick="openMomentPlayer('night')">
+              <div class="moment-topic-icon"><i data-lucide="moon"></i></div>
+              <div class="moment-topic-name">晚安</div>
+              <div class="moment-topic-sub">Mahaen kamo</div>
+            </div>
+            <div class="moment-topic-card" onclick="openMomentPlayer('rain')">
+              <div class="moment-topic-icon"><i data-lucide="cloud-rain"></i></div>
+              <div class="moment-topic-name">下雨</div>
+              <div class="moment-topic-sub">Orad ko uraw</div>
+            </div>
+            <div class="moment-topic-card" onclick="openMomentPlayer('homesick')">
+              <div class="moment-topic-icon"><i data-lucide="home"></i></div>
+              <div class="moment-topic-name">想家</div>
+              <div class="moment-topic-sub">Papelo ko radiw</div>
+            </div>
+            <div class="moment-topic-card" onclick="openMomentPlayer('hungry')">
+              <div class="moment-topic-icon"><i data-lucide="coffee"></i></div>
+              <div class="moment-topic-name">肚子餓</div>
+              <div class="moment-topic-sub">Mihamis kamo haw?</div>
+            </div>
           </div>
         </div>
 
-        <h3 class="moment-phrase-native" id="moment-text-native">Mahaen kamo</h3>
-        <p class="moment-phrase-zh" id="moment-text-zh">晚安，大家</p>
-        
-        <p class="moment-story-box" id="moment-story-desc">
-          阿美族人的晚安不只是道別，是把對方交託給夜晚的星海。
-        </p>
-
-        <!-- 播放控制列 (30s) -->
-        <div class="today-control-bar" style="padding: 10px 0 0 0;">
-          <button class="btn-play-mini" id="btn-moment-play-toggle">
-            <i data-lucide="play" id="moment-play-icon"></i>
-          </button>
-          <div class="progress-bar-container" id="moment-progress-container">
-            <div class="progress-bar-fill" id="moment-progress-fill"></div>
+        <!-- 主題二：文化故事 -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="book-open" style="width:14px;height:14px;"></i> 文化故事
           </div>
-          <span class="countdown-timer" id="moment-timer">30s</span>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="moment-topic-card" onclick="openMomentPlayer('alofo')">
+              <div class="moment-topic-icon"><i data-lucide="shopping-bag"></i></div>
+              <div class="moment-topic-name">情人袋</div>
+              <div class="moment-topic-sub">Alofo</div>
+            </div>
+            <div class="moment-topic-card coming-soon">
+              <div class="moment-topic-icon"><i data-lucide="music"></i></div>
+              <div class="moment-topic-name">古調</div>
+              <div class="moment-topic-sub">即將上線</div>
+            </div>
+          </div>
         </div>
 
-        <!-- 收藏此片刻按鈕 -->
-        <button class="btn-action-primary" id="btn-collect-moment" style="margin-top: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--color-border-glass); color: var(--color-text-stars);">
-          <i data-lucide="heart" id="collect-icon" style="width: 16px; height: 16px;"></i>
-          <span id="collect-btn-text">收藏此片刻</span>
-        </button>
+        <!-- 主題三：節日節選 -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="sparkles" style="width:14px;height:14px;"></i> 節日節選
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="moment-topic-card coming-soon">
+              <div class="moment-topic-icon"><i data-lucide="flag"></i></div>
+              <div class="moment-topic-name">豐年祭</div>
+              <div class="moment-topic-sub">即將上線</div>
+            </div>
+            <div class="moment-topic-card coming-soon">
+              <div class="moment-topic-icon"><i data-lucide="sun"></i></div>
+              <div class="moment-topic-name">小米收穫祭</div>
+              <div class="moment-topic-sub">即將上線</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1923,13 +2043,288 @@
       </div>
     </div>
 
+    <!-- 播放頁，預設隱藏 -->
+    <div id="moment-player-screen" style="position:absolute; inset:0; z-index:80; display:none; flex-direction:column; background:#010308; overflow-y:auto;">
+
+      <!-- 頂部 Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; position:relative; z-index:3; flex-shrink:0;">
+        <button onclick="closeMomentPlayer()" style="background:rgba(255,255,255,0.08); border:none; width:38px; height:38px; border-radius:50%; display:flex; justify-content:center; align-items:center; color:#fff; cursor:pointer;">
+          <i data-lucide="chevron-left" style="width:20px;height:20px;"></i>
+        </button>
+        <span style="font-family:var(--font-family-serif); font-size:1rem; color:var(--color-amber); font-weight:600; letter-spacing:0.1em;">Loma' 文化時刻</span>
+        <div style="width:38px;"></div>
+      </div>
+
+      <!-- 標題文字 -->
+      <div style="padding:0 20px 12px; flex-shrink:0;">
+        <div id="moment-player-title" style="font-family:var(--font-family-serif); font-size:1rem; color:rgba(255,255,255,0.85); letter-spacing:0.05em;"></div>
+      </div>
+
+      <!-- 影片播放區（16:9） -->
+      <div style="position:relative; width:100%; padding-top:56.25%; flex-shrink:0; overflow:hidden;">
+        <img id="moment-player-bg" src="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;">
+        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%); z-index:1;"></div>
+
+        <!-- 中間播放按鈕 + 波紋 -->
+        <div style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center; z-index:3;">
+          <div style="position:relative; display:flex; justify-content:center; align-items:center;">
+            <div class="player-ripple r1"></div>
+            <div class="player-ripple r2"></div>
+            <div class="player-ripple r3"></div>
+            <button id="moment-play-btn" onclick="toggleMomentPlay()" style="width:64px; height:64px; border-radius:50%; background:rgba(212,165,116,0.88); border:none; cursor:pointer; display:flex; justify-content:center; align-items:center; position:relative; z-index:2;">
+              <i id="moment-play-icon" data-lucide="play" style="width:26px;height:26px;color:#071426;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 族語字幕 -->
+        <div style="position:absolute; bottom:44px; left:0; right:0; text-align:center; z-index:3; padding:0 20px;">
+          <div id="moment-amis-text" style="font-family:var(--font-family-serif); font-size:1rem; color:var(--color-amber); font-style:italic;"></div>
+        </div>
+
+        <!-- 進度條 -->
+        <div style="position:absolute; bottom:0; left:0; right:0; z-index:3; display:flex; align-items:center; gap:10px; padding:8px 16px 12px;">
+          <i data-lucide="headphones" style="width:14px;height:14px;color:rgba(168,184,200,0.7);"></i>
+          <span id="moment-time-current" style="font-size:0.68rem; color:rgba(168,184,200,0.7); min-width:28px;">0:00</span>
+          <div style="flex:1; height:3px; background:rgba(255,255,255,0.2); border-radius:2px;">
+            <div id="moment-progress-fill" style="height:100%; width:0%; background:var(--color-amber); border-radius:2px; transition:width 0.1s linear;"></div>
+          </div>
+          <span style="font-size:0.68rem; color:rgba(168,184,200,0.7);">0:30</span>
+        </div>
+      </div>
+
+      <!-- 以下為可捲動內容 -->
+      <div style="padding:16px 20px; display:flex; flex-direction:column; gap:16px;">
+
+        <!-- 故事卡片 -->
+        <div style="background:rgba(7,20,38,0.7); border:1px solid rgba(212,165,116,0.2); border-radius:16px; padding:16px; backdrop-filter:blur(12px);">
+          <div id="moment-story-name" style="font-family:var(--font-family-serif); font-size:1.1rem; color:var(--color-amber); font-weight:600; margin-bottom:4px;"></div>
+          <div id="moment-story-zh" style="font-size:0.85rem; color:#fff; margin-bottom:10px; font-weight:500;"></div>
+          <div id="moment-story-text" style="font-size:0.78rem; color:var(--color-silver-70); line-height:1.7; border-left:2px solid rgba(212,165,116,0.4); padding-left:10px;"></div>
+        </div>
+
+        <!-- 動作按鈕列 -->
+        <div style="display:flex; gap:10px;">
+          <button id="moment-collect-btn" onclick="toggleMomentCollect()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+            <i id="collect-icon" data-lucide="heart" style="width:15px;height:15px;"></i>
+            <span id="collect-text">收藏</span>
+          </button>
+          <button onclick="downloadMomentCard()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+            <i data-lucide="download" style="width:15px;height:15px;"></i>
+            <span>心情小卡</span>
+          </button>
+          <button onclick="shareLine()" style="flex:1; padding:11px; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:12px; color:var(--color-silver-70); font-size:0.78rem; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:6px; transition:all 0.2s;">
+            <i data-lucide="share-2" style="width:15px;height:15px;"></i>
+            <span>LINE 分享</span>
+          </button>
+        </div>
+
+        <!-- 配對選品 -->
+        <div>
+          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.1em; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="sparkles" style="width:13px;height:13px;"></i> 這個故事的選品
+          </div>
+          <div id="moment-shop-card" style="display:flex; background:rgba(7,20,38,0.55); border:1px solid rgba(212,165,116,0.2); border-radius:14px; overflow:hidden; cursor:pointer;" onclick="window.navigateTo('screen-shop')">
+            <img id="moment-shop-img" src="" style="width:100px; height:100px; object-fit:cover; flex-shrink:0;">
+            <div style="padding:12px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div id="moment-shop-brand" style="font-size:0.65rem; color:var(--color-amber); margin-bottom:3px;"></div>
+                <div id="moment-shop-name" style="font-size:0.9rem; font-weight:600; color:#fff; margin-bottom:3px;"></div>
+                <div id="moment-shop-desc" style="font-size:0.72rem; color:var(--color-silver-70); line-height:1.4;"></div>
+              </div>
+              <div style="text-align:right; margin-top:6px;">
+                <span style="font-size:0.75rem; color:var(--color-amber); font-weight:600;">前往選品 →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 留言區 -->
+        <div>
+          <div style="font-size:0.75rem; color:var(--color-amber); letter-spacing:0.1em; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="message-circle" style="width:13px;height:13px;"></i> 族人留言
+          </div>
+
+          <!-- 留言輸入 -->
+          <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <input id="comment-input" type="text" placeholder="分享你的感受或故事..." style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--color-border-glass); border-radius:10px; padding:10px 14px; color:#fff; font-size:0.82rem; outline:none; font-family:var(--font-family-sans);">
+            <button onclick="submitComment()" style="padding:10px 14px; background:var(--color-amber); border:none; border-radius:10px; color:#071426; font-size:0.82rem; font-weight:600; cursor:pointer;">送出</button>
+          </div>
+
+          <!-- 假留言列表 -->
+          <div id="comments-list" style="display:flex; flex-direction:column; gap:12px;">
+
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="comment-avatar">阿</div>
+                <div>
+                  <div class="comment-name">阿美飛魚</div>
+                  <div class="comment-time">10 分鐘前</div>
+                </div>
+              </div>
+              <div class="comment-text">每次聽到這句話都會想到阿嬤，謝謝你們做這個 🌊</div>
+              <button class="comment-reply-btn" onclick="toggleReply(this)">
+                <i data-lucide="corner-down-right" style="width:12px;height:12px;"></i> 回覆
+              </button>
+              <div class="reply-input-area" style="display:none; margin-top:8px;">
+                <div style="display:flex; gap:6px;">
+                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
+                  <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-header">
+                <div class="comment-avatar">排</div>
+                <div>
+                  <div class="comment-name">排灣山風</div>
+                  <div class="comment-time">32 分鐘前</div>
+                </div>
+              </div>
+              <div class="comment-text">在台北工作第五年了，這句話讓我眼眶紅了。Masalu 🙏</div>
+              <button class="comment-reply-btn" onclick="toggleReply(this)">
+                <i data-lucide="corner-down-right" style="width:12px;height:12px;"></i> 回覆
+              </button>
+              <div class="reply-input-area" style="display:none;">
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                  <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
+                  <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 底部留白 -->
+        <div style="height:80px;"></div>
+
+      </div>
+
   </div>
 
   <script>
     // ==========================================
+    // 文化時刻二層播放頁資料與引擎
+    // ==========================================
+    const MOMENT_PLAYER_DATA = {
+      night: {
+        title: "深夜的星海，陪你到天亮",
+        amis: "Mahaen kamo",
+        zh: "晚安，大家",
+        story: "阿美族人的晚安不只是道別，是把對方交託給夜晚的星海。",
+        bg: "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=600&q=80"
+      },
+      rain: {
+        title: "雨，是祖先回來探望",
+        amis: "Orad ko uraw",
+        zh: "下雨了",
+        story: "雨，是祖先回來探望的聲音。每一滴打落在都會屋簷的雨，都帶著重重深山的泥土氣味。",
+        bg: "https://images.unsplash.com/photo-1428592953211-077101b2021b?w=600&q=80"
+      },
+      homesick: {
+        title: "歌聲帶我回家",
+        amis: "Papelo ko radiw",
+        zh: "歌聲帶我回家",
+        story: "每一首緩慢悠長的古調，都是一條通往海洋與家鄉的路。在城市裡唱歌的人，靈魂就永遠不會迷路。",
+        bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
+      },
+      hungry: {
+        title: "你今天喝了嗎？",
+        amis: "Mihamis kamo haw?",
+        zh: "你今天喝了嗎？",
+        story: "部落長輩的問候從不是「你好嗎」，而是「你吃了嗎？」飲食即是關懷，每一次的滋養都是最真切的問候。",
+        bg: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80"
+      },
+      alofo: {
+        title: "定情的編織，部落的承諾",
+        amis: "Alofo, sasengan ni tinalaw a pinaule.",
+        zh: "情人袋：深夜的避風港",
+        story: "在阿美族人的傳統裡，情人袋不只是日常的陪伴，更是情感的寄託與承諾。",
+        bg: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=80"
+      }
+    };
+
+    let momentPlayerTimer = null;
+    let momentCurrentTime = 0;
+    let momentIsPlaying = false;
+
+    window.openMomentPlayer = function(key) {
+      const data = MOMENT_PLAYER_DATA[key];
+      if (!data) return;
+      
+      document.getElementById('moment-player-bg').src = data.bg;
+      document.getElementById('moment-player-title').textContent = data.title;
+      document.getElementById('moment-amis-text').textContent = data.amis;
+      document.getElementById('moment-story-name').textContent = data.amis;
+      document.getElementById('moment-story-zh').textContent = data.zh;
+      document.getElementById('moment-story-text').textContent = data.story;
+
+      // 帶入選品
+      const shop = MOMENT_SHOP_DATA[key];
+      if (shop) {
+        document.getElementById('moment-shop-img').src = shop.img;
+        document.getElementById('moment-shop-brand').textContent = shop.brand;
+        document.getElementById('moment-shop-name').textContent = shop.name;
+        document.getElementById('moment-shop-desc').textContent = shop.desc;
+      }
+
+      // 重設播放狀態
+      momentCurrentTime = 0;
+      momentIsPlaying = false;
+      document.getElementById('moment-progress-fill').style.width = '0%';
+      document.getElementById('moment-time-current').textContent = '0:00';
+      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+
+      // 重設收藏按鈕
+      currentMomentKey = key;
+      updateCollectButton();
+
+      document.getElementById('moment-player-screen').style.display = 'flex';
+      
+      // 開啟播放器時，若有其他後台音樂在播則暫停
+      if (howlTodayPlayer && howlTodayPlayer.playing()) howlTodayPlayer.pause();
+      if (howlMomentPlayer && howlMomentPlayer.playing()) howlMomentPlayer.pause();
+
+      lucide.createIcons();
+    };
+
+    window.closeMomentPlayer = function() {
+      document.getElementById('moment-player-screen').style.display = 'none';
+      stopMomentPlayer();
+    };
+
+    window.toggleMomentPlay = function() {
+      momentIsPlaying = !momentIsPlaying;
+      if (momentIsPlaying) {
+        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'pause');
+        momentPlayerTimer = setInterval(() => {
+          momentCurrentTime += 0.1;
+          const pct = Math.min(100, (momentCurrentTime / 30) * 100);
+          document.getElementById('moment-progress-fill').style.width = pct + '%';
+          const secs = Math.floor(momentCurrentTime);
+          document.getElementById('moment-time-current').textContent = '0:' + String(secs).padStart(2,'0');
+          if (momentCurrentTime >= 30) stopMomentPlayer();
+        }, 100);
+      } else {
+        document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+        clearInterval(momentPlayerTimer);
+      }
+      lucide.createIcons();
+    };
+
+    window.stopMomentPlayer = function() {
+      momentIsPlaying = false;
+      clearInterval(momentPlayerTimer);
+      document.getElementById('moment-play-icon').setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+    };
+
+    // ==========================================
     // 1. 全域多媒體資源與數據庫定義
     // ==========================================
-    const SPLASH_VIDEO_SRC = ""; // 用於歡迎畫面 z-index:0 背景影片
+    const SPLASH_VIDEO_SRC = "splash.mp4"; // 用於歡迎畫面 z-index:0 背景影片
     const TODAY_VIDEO_SRC = "";  // 用於首頁今日片刻 16:9 影片區
 
     // 心情文化片刻資料
@@ -2410,45 +2805,7 @@
         updateProgressUi("today", targetTime);
       });
 
-      // 2. 初始化文化片刻播放器
-      loadMoodContent("night");
-
-      // 綁定心情 2x2 卡片切換
-      const moodItems = document.querySelectorAll(".mood-grid-item");
-      moodItems.forEach(item => {
-        item.addEventListener("click", () => {
-          moodItems.forEach(x => x.classList.remove("active"));
-          item.classList.add("active");
-          const moodKey = item.getAttribute("data-mood");
-          loadMoodContent(moodKey);
-        });
-      });
-
-      // 綁定文化片刻播放按鈕
-      document.getElementById("btn-moment-play-toggle").addEventListener("click", () => {
-        if (howlMomentPlayer.playing()) {
-          howlMomentPlayer.pause();
-        } else {
-          if (howlTodayPlayer && howlTodayPlayer.playing()) howlTodayPlayer.pause();
-          howlMomentPlayer.play();
-        }
-      });
-
-      // 綁定文化片刻進度條尋道 (Seek)
-      const momentBar = document.getElementById("moment-progress-container");
-      momentBar.addEventListener("click", (e) => {
-        const rect = momentBar.getBoundingClientRect();
-        const pct = (e.clientX - rect.left) / rect.width;
-        const targetTime = Math.min(howlMomentPlayer.duration(), 30) * pct;
-        howlMomentPlayer.seek(targetTime);
-        updateProgressUi("moment", targetTime);
-      });
-
-      // 收藏按鈕點擊綁定
-      const collectBtn = document.getElementById("btn-collect-moment");
-      collectBtn.addEventListener("click", () => {
-        toggleBookmark(currentActiveMood);
-      });
+      // 2. 舊文化片刻播放器已棄用，改由二層 moment-player-screen 接管
     }
 
     // 載入心情與古調音軌
@@ -2751,21 +3108,144 @@
               <h4>${data.amis}</h4>
               <p>${data.zh}</p>
             `;
-            // 點擊卡片跳轉回文化片刻畫面向導
+            // 點擊卡片跳轉並打開文化時刻播放頁
             card.addEventListener("click", () => {
-              window.navigateTo("screen-moments");
-              
-              // 模擬點擊 2x2 網格的心情項目
-              const gridItem = document.querySelector(`.mood-grid-item[data-mood="${moodKey}"]`);
-              if (gridItem) {
-                gridItem.click();
-              }
+              openMomentPlayer(moodKey);
             });
             grid.appendChild(card);
           }
         });
-      }
     }
+
+    // ==========================================
+    // 文化片刻二層播放頁附屬功能與互動引擎
+    // ==========================================
+
+    // 選品配對資料
+    const MOMENT_SHOP_DATA = {
+      night: {
+        brand: "山海氣味所",
+        name: "Sangpi 海岸香氛蠟燭",
+        desc: "以山林、海洋與土地的氣味，陪伴你度過每個深夜時刻。",
+        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=300&q=80"
+      },
+      rain: {
+        brand: "山海氣味所",
+        name: "Sangpi 海岸香氛蠟燭",
+        desc: "雨天點燃，讓山林氣味填滿整個房間。",
+        img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=300&q=80"
+      },
+      homesick: {
+        brand: "原青手作工坊",
+        name: "Alofo 編織手作包",
+        desc: "每個包都用阿美族傳統編織手法完成，帶著家鄉的溫度。",
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+      },
+      hungry: {
+        brand: "原青手作工坊",
+        name: "Alofo 編織手作包",
+        desc: "把部落的味道帶進城市日常。",
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+      },
+      alofo: {
+        brand: "原青手作工坊",
+        name: "Alofo 編織手作包",
+        desc: "每個包都用阿美族傳統編織手法完成，結合現代美學與日常實用性。",
+        img: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&q=80"
+      }
+    };
+
+    // 收藏功能
+    let currentMomentKey = '';
+
+    window.toggleMomentCollect = function() {
+      let bookmarks = JSON.parse(localStorage.getItem('loma_bookmarks') || '[]');
+      if (bookmarks.includes(currentMomentKey)) {
+        bookmarks = bookmarks.filter(x => x !== currentMomentKey);
+      } else {
+        bookmarks.push(currentMomentKey);
+      }
+      localStorage.setItem('loma_bookmarks', JSON.stringify(bookmarks));
+      updateCollectButton();
+      
+      // 同步更新個人收藏夾 UI
+      if (typeof renderBookmarks === 'function') {
+        renderBookmarks();
+      }
+    };
+
+    window.updateCollectButton = function() {
+      const bookmarks = JSON.parse(localStorage.getItem('loma_bookmarks') || '[]');
+      const isCollected = bookmarks.includes(currentMomentKey);
+      const icon = document.getElementById('collect-icon');
+      const text = document.getElementById('collect-text');
+      if (icon && text) {
+        if (isCollected) {
+          icon.style.fill = 'var(--color-amber)';
+          icon.style.color = 'var(--color-amber)';
+          text.textContent = '已收藏';
+        } else {
+          icon.style.fill = 'none';
+          icon.style.color = 'var(--color-silver-70)';
+          text.textContent = '收藏';
+        }
+      }
+    };
+
+    // 下載心情小卡（暫時 alert）
+    window.downloadMomentCard = function() {
+      alert('心情小卡下載功能即將上線 🌊');
+    };
+
+    // LINE 分享
+    window.shareLine = function() {
+      const data = MOMENT_PLAYER_DATA[currentMomentKey];
+      if (!data) return;
+      const text = encodeURIComponent(`「${data.amis}」— ${data.zh}\n\n${data.story}\n\nLoma' 海洋喝吧`);
+      window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
+    };
+
+    // 回覆按鈕切換
+    window.toggleReply = function(btn) {
+      const replyArea = btn.nextElementSibling;
+      if (replyArea) {
+        const isHidden = replyArea.style.display === 'none' || replyArea.style.display === '';
+        replyArea.style.display = isHidden ? 'block' : 'none';
+      }
+    };
+
+    // 新增留言
+    window.submitComment = function() {
+      const input = document.getElementById('comment-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const list = document.getElementById('comments-list');
+      const item = document.createElement('div');
+      item.className = 'comment-item';
+      item.innerHTML = `
+        <div class="comment-header">
+          <div class="comment-avatar">我</div>
+          <div>
+            <div class="comment-name">你</div>
+            <div class="comment-time">剛剛</div>
+          </div>
+        </div>
+        <div class="comment-text">${text}</div>
+        <button class="comment-reply-btn" onclick="toggleReply(this)">
+          <i data-lucide="corner-down-right" style="width:12px;height:12px;"></i> 回覆
+        </button>
+        <div class="reply-input-area" style="display:none;">
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <input type="text" placeholder="回覆..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--color-border-glass); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.78rem; outline:none; font-family:var(--font-family-sans);">
+            <button style="padding:8px 12px; background:rgba(212,165,116,0.2); border:1px solid var(--color-amber); border-radius:8px; color:var(--color-amber); font-size:0.75rem; cursor:pointer;">送出</button>
+          </div>
+        </div>
+      `;
+      list.insertBefore(item, list.firstChild);
+      input.value = '';
+      lucide.createIcons();
+    };
   </script>
 </body>
 </html>
